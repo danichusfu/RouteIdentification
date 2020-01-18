@@ -1,7 +1,4 @@
-library(tidyverse)
-library(tictoc)
-library(emdbook)
-library(bezier)
+
 
 
 #' Generate random controls for different template curves
