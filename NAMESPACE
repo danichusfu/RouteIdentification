@@ -1,0 +1,7 @@
+exportPattern("^[[:alpha:]]+")
+importFrom("stats", "kmeans")
+importFrom("utils", "data")
+importFrom("MASS", "mvrnorm")
+importFrom("Matrix", "t")
+importFrom("Matrix", "as.matrix")
+importFrom("Matrix", "Diagonal")
