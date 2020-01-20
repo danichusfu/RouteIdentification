@@ -42,10 +42,6 @@ This is a basic example which shows you how to solve a common problem:
 # devtools::install_github(repo = "danichusfu/RouteIdentification")
 
 library(RouteIdentification)
-library(tidyverse)
-library(tictoc)
-library(emdbook)
-library(bezier)
 
 cluster_controls <- generate_random_cluster_controls(number_of_clusters = 3)
 

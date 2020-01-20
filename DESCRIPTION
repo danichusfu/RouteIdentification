@@ -9,7 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Depends:
  ggplot2,
  purrr,
  tibble,
@@ -22,6 +22,7 @@ Imports:
  tictoc,
  emdbook,
  bezier,
+Imports: 
  MASS,
  Matrix
 RoxygenNote: 7.0.2

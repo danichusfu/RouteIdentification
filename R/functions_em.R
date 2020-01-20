@@ -11,7 +11,7 @@
 #' @return The randomized cluster controls
 generate_random_cluster_controls <- function(number_of_clusters = 5, P = 3){
   cluster_controls <-
-    tibble(cluster_num = 1:number_of_clusters) %>%
+    tibble::tibble(cluster_num = 1:number_of_clusters) %>%
     mutate(Beta = map(cluster_num, ~ tibble(x = c(5, round(10 * runif(P))),
                                             y = c(0, round(10 * runif(P))))),
            sigma_2 = list(tibble(x = 0.001,
