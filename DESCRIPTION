@@ -25,4 +25,5 @@ Imports:
  MASS,
  Matrix
 RoxygenNote: 7.0.2
-VignetteBuilder: utils
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
