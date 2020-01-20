@@ -78,23 +78,23 @@ em_results <-
   nested_trajectory_data %>%
   unnest(cols = c(x, y)) %>%
   cluster_trajectory_data(K = 3)
-#> 0.01 sec elapsed
+#> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 0.49 sec elapsed
+#> 0.61 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.03 sec elapsed
+#> 0.05 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 0.5 sec elapsed
-#> [1] 3493.878
+#> 0.75 sec elapsed
+#> [1] 3533.686
 #> [1] "m_step time"
-#> 0.01 sec elapsed
+#> 0.03 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 0.5 sec elapsed
-#> 1.53 sec elapsed
+#> 0.76 sec elapsed
+#> 2.2 sec elapsed
 
 
 cluster_means <-
@@ -113,8 +113,8 @@ nested_trajectory_data %>%
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
 #> 1       1            2     7
-#> 2       2            3     5
-#> 3       3            1     8
+#> 2       2            3     4
+#> 3       3            1     9
 
 nested_trajectory_data %>%
   bind_cols(as_tibble(em_results$Pik)) %>%
@@ -157,28 +157,27 @@ new_data_fit %>%
 #> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                2    37
-#> 2       2                3    39
-#> 3       3                1    44
+#> 1       1                2    43
+#> 2       2                3    41
+#> 3       3                1    36
 ```
 
 ``` r
-nfl_em_results <- read_rds("data/em_results_30.rds")
-
 # replace this with actual nfl route that has been transformed properly. Its incoming
-fit_new_data(new_trajectory_data, nfl_em_results)
-#> # A tibble: 120 x 4
-#>    curve_i cluster           data cluster_assigned
-#>      <int>   <dbl> <list<df[,2]>>            <dbl>
-#>  1       1       2       [39 x 2]                3
-#>  2       2       3       [37 x 2]               26
-#>  3       3       1       [47 x 2]               24
-#>  4       4       1       [43 x 2]               24
-#>  5       5       1       [40 x 2]               24
-#>  6       6       1       [45 x 2]               24
-#>  7       7       3       [36 x 2]               26
-#>  8       8       1       [38 x 2]               24
-#>  9       9       1       [44 x 2]               24
-#> 10      10       3       [43 x 2]               26
+fit_new_data(new_trajectory_data, nfl_em_results) %>%
+  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+#> # A tibble: 120 x 5
+#>    curve_i cluster           data cluster_assigned route_name
+#>      <int>   <dbl> <list<df[,2]>>            <dbl> <chr>     
+#>  1       1       1       [40 x 2]               26 deep_out  
+#>  2       2       2       [37 x 2]               24 quick_out 
+#>  3       3       3       [41 x 2]                9 comeback  
+#>  4       4       2       [42 x 2]               24 quick_out 
+#>  5       5       1       [37 x 2]               26 deep_out  
+#>  6       6       3       [43 x 2]                9 comeback  
+#>  7       7       2       [49 x 2]               24 quick_out 
+#>  8       8       3       [47 x 2]                9 comeback  
+#>  9       9       3       [43 x 2]                9 comeback  
+#> 10      10       1       [38 x 2]               26 deep_out  
 #> # ... with 110 more rows
 ```

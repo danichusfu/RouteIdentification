@@ -1,5 +1,5 @@
 ---
-title: "Put the title of your vignette here"
+title: "Use RouteIdentification on generated data"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Put the title of your vignette here}

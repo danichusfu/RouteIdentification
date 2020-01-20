@@ -1,5 +1,7 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -100,8 +102,7 @@ new_data_fit %>%
 ```
 
 ```{r}
-nfl_em_results <- read_rds("data/em_results_30.rds")
-
 # replace this with actual nfl route that has been transformed properly. Its incoming
-fit_new_data(new_trajectory_data, nfl_em_results)
+fit_new_data(new_trajectory_data, nfl_em_results) %>%
+  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 ```
