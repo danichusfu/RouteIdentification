@@ -3,7 +3,6 @@ export(generate_sample_data)
 export(cluster_trajectory_data)
 export(extract_cluster_means)
 export(fit_new_data)
-
 importFrom("stats", "kmeans")
 importFrom("utils", "data")
 importFrom("MASS", "mvrnorm")

@@ -1,0 +1,105 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# RouteIdentification
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of RouteIdentification is to ...
+
+## Installation
+
+<!--You can install the released version of RouteIdentification from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("RouteIdentification")
+```
+ -->
+ 
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("danichusfu/RouteIdentification")
+```
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r}
+# devtools::install_github(repo = "danichusfu/RouteIdentification")
+
+library(RouteIdentification)
+library(tidyverse)
+library(tictoc)
+library(emdbook)
+library(bezier)
+
+cluster_controls <- generate_random_cluster_controls(number_of_clusters = 3)
+
+nested_trajectory_data <-
+  generate_sample_data(cluster_controls, number_of_curves = 20) %>%
+  select(curve_i, x, y, cluster = cluster_num)
+
+
+em_results <-
+  nested_trajectory_data %>%
+  unnest(cols = c(x, y)) %>%
+  cluster_trajectory_data(K = 3)
+
+
+cluster_means <-
+  extract_cluster_means(em_results)
+
+nested_trajectory_data %>%
+  bind_cols(as_tibble(em_results$Pik)) %>%
+  mutate(curve_i = row_number()) %>%
+  pivot_longer(names_to = "pred_cluster", values_to = "prob", matches("\\d")) %>%
+  mutate(pred_cluster = parse_number(pred_cluster)) %>%
+  group_by(curve_i) %>%
+  filter(prob == max(prob)) %>%
+  ungroup() %>%
+  count(cluster, pred_cluster)
+
+nested_trajectory_data %>%
+  bind_cols(as_tibble(em_results$Pik)) %>%
+  mutate(curve_i = row_number()) %>%
+  pivot_longer(names_to = "pred_cluster", values_to = "prob", matches("\\d")) %>%
+  mutate(pred_cluster = parse_number(pred_cluster)) %>%
+  group_by(curve_i) %>%
+  filter(prob == max(prob)) %>%
+  unnest(cols = c(x, y)) %>%
+ggplot(aes(x = x, y = y, group = curve_i, colour = factor(cluster))) +
+  geom_path() +
+  facet_wrap(~ pred_cluster)
+
+
+ggplot(cluster_means, aes(x = V1, y = V2, colour = factor(cluster))) +
+  geom_path()+
+  facet_wrap(~ cluster)
+
+new_nested_trajectory_data <-
+  generate_sample_data(cluster_controls) %>%
+  select(curve_i, x, y, cluster = cluster_num)
+
+
+new_trajectory_data <- new_nested_trajectory_data %>% unnest(cols = c(x, y))
+
+new_data_fit <- fit_new_data(new_trajectory_data, em_results)
+
+new_data_fit %>%
+  count(cluster, cluster_assigned)
+```
+
