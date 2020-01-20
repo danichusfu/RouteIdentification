@@ -78,23 +78,23 @@ em_results <-
   nested_trajectory_data %>%
   unnest(cols = c(x, y)) %>%
   cluster_trajectory_data(K = 3)
-#> 0 sec elapsed
+#> 0.01 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 0.53 sec elapsed
+#> 0.49 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.05 sec elapsed
+#> 0.03 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
 #> 0.5 sec elapsed
-#> [1] 3477.8
+#> [1] 3493.878
 #> [1] "m_step time"
 #> 0.01 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 0.52 sec elapsed
-#> 1.61 sec elapsed
+#> 0.5 sec elapsed
+#> 1.53 sec elapsed
 
 
 cluster_means <-
@@ -112,9 +112,9 @@ nested_trajectory_data %>%
 #> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            1    11
-#> 2       2            2     5
-#> 3       3            3     4
+#> 1       1            2     7
+#> 2       2            3     5
+#> 3       3            1     8
 
 nested_trajectory_data %>%
   bind_cols(as_tibble(em_results$Pik)) %>%
@@ -157,7 +157,28 @@ new_data_fit %>%
 #> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                1    36
-#> 2       2                2    48
-#> 3       3                3    36
+#> 1       1                2    37
+#> 2       2                3    39
+#> 3       3                1    44
+```
+
+``` r
+nfl_em_results <- read_rds("data/em_results_30.rds")
+
+# replace this with actual nfl route that has been transformed properly. Its incoming
+fit_new_data(new_trajectory_data, nfl_em_results)
+#> # A tibble: 120 x 4
+#>    curve_i cluster           data cluster_assigned
+#>      <int>   <dbl> <list<df[,2]>>            <dbl>
+#>  1       1       2       [39 x 2]                3
+#>  2       2       3       [37 x 2]               26
+#>  3       3       1       [47 x 2]               24
+#>  4       4       1       [43 x 2]               24
+#>  5       5       1       [40 x 2]               24
+#>  6       6       1       [45 x 2]               24
+#>  7       7       3       [36 x 2]               26
+#>  8       8       1       [38 x 2]               24
+#>  9       9       1       [44 x 2]               24
+#> 10      10       3       [43 x 2]               26
+#> # ... with 110 more rows
 ```

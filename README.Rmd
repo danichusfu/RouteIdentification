@@ -99,3 +99,9 @@ new_data_fit %>%
   count(cluster, cluster_assigned)
 ```
 
+```{r}
+nfl_em_results <- read_rds("data/em_results_30.rds")
+
+# replace this with actual nfl route that has been transformed properly. Its incoming
+fit_new_data(new_trajectory_data, nfl_em_results)
+```
