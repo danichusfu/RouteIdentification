@@ -10,7 +10,15 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
- tidyverse,
+ ggplot2,
+ purrr,
+ tibble,
+ dplyr,
+ tidyr,
+ stringr,
+ readr,
+ forcats,
+ magrittr,
  tictoc,
  emdbook,
  bezier,
