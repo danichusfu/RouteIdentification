@@ -7,8 +7,11 @@
 
 <!-- badges: end -->
 
-The goal of RouteIdentification is to
-…
+The goal of RouteIdentification is to clustery trajectory data sets like
+those found in sports analytics tracking data. This work was developed
+as part of the first Big Data Bowl and the methodology is written about
+in
+[JQAS](https://www.degruyter.com/view/j/jqas.ahead-of-print/jqas-2019-0047/jqas-2019-0047.xml?format=INT)
 
 ## Installation
 
@@ -19,7 +22,8 @@ install.packages("RouteIdentification")
 ```
  -->
 
-And the development version from [GitHub](https://github.com/) with:
+You can install the development version from
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -82,80 +86,20 @@ em_results <-
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 1.31 sec elapsed
+#> 0.53 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.08 sec elapsed
+#> 0.03 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 0.95 sec elapsed
-#> [1] -606.7129
+#> 0.53 sec elapsed
+#> [1] 3647.155
 #> [1] "m_step time"
-#> 0.03 sec elapsed
+#> 0.02 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 1.02 sec elapsed
-#> [1] -601.8881
-#> [1] "m_step time"
-#> 0.06 sec elapsed
-#> [1] 4
-#> [1] "e_step time"
-#> 0.82 sec elapsed
-#> [1] -594.2849
-#> [1] "m_step time"
-#> 0.04 sec elapsed
-#> [1] 5
-#> [1] "e_step time"
-#> 1.01 sec elapsed
-#> [1] -592.1602
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 6
-#> [1] "e_step time"
-#> 1.23 sec elapsed
-#> [1] -592.253
-#> [1] "m_step time"
-#> 0.03 sec elapsed
-#> [1] 7
-#> [1] "e_step time"
-#> 1.13 sec elapsed
-#> [1] -592.3209
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 8
-#> [1] "e_step time"
-#> 0.93 sec elapsed
-#> [1] -592.3846
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 9
-#> [1] "e_step time"
-#> 1 sec elapsed
-#> [1] -592.3089
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 10
-#> [1] "e_step time"
-#> 1.08 sec elapsed
-#> [1] -592.1239
-#> [1] "m_step time"
-#> 0.04 sec elapsed
-#> [1] 11
-#> [1] "e_step time"
-#> 1.56 sec elapsed
-#> [1] -592.4983
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 12
-#> [1] "e_step time"
-#> 1.08 sec elapsed
-#> [1] -592.5133
-#> [1] "m_step time"
-#> 0.03 sec elapsed
-#> [1] 13
-#> [1] "e_step time"
-#> 0.78 sec elapsed
-#> 14.53 sec elapsed
+#> 0.52 sec elapsed
+#> 1.63 sec elapsed
 
 
 cluster_means <-
@@ -170,13 +114,12 @@ nested_trajectory_data %>%
   filter(prob == max(prob)) %>%
   ungroup() %>%
   count(cluster, pred_cluster)
-#> # A tibble: 4 x 3
+#> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            1     5
-#> 2       2            2     4
-#> 3       2            3     2
-#> 4       3            1     9
+#> 1       1            1    12
+#> 2       2            3     4
+#> 3       3            2     4
 
 nested_trajectory_data %>%
   bind_cols(as_tibble(em_results$Pik)) %>%
@@ -216,13 +159,12 @@ new_data_fit <- fit_new_data(new_trajectory_data, em_results)
 
 new_data_fit %>%
   count(cluster, cluster_assigned)
-#> # A tibble: 4 x 3
+#> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                1    33
-#> 2       2                2    42
-#> 3       2                3     4
-#> 4       3                1    41
+#> 1       1                1    46
+#> 2       2                3    31
+#> 3       3                2    43
 ```
 
 ``` r
@@ -232,18 +174,20 @@ fit_new_data(new_trajectory_data, nfl_em_results) %>%
 #> # A tibble: 120 x 5
 #>    curve_i cluster           data cluster_assigned route_name
 #>      <int>   <dbl> <list<df[,2]>>            <dbl> <chr>     
-#>  1       1       1       [37 x 2]               26 deep_out  
-#>  2       2       3       [44 x 2]               26 deep_out  
-#>  3       3       1       [48 x 2]               26 deep_out  
-#>  4       4       3       [36 x 2]               26 deep_out  
-#>  5       5       2       [45 x 2]               26 deep_out  
-#>  6       6       2       [39 x 2]               26 deep_out  
-#>  7       7       3       [47 x 2]               26 deep_out  
-#>  8       8       1       [47 x 2]               26 deep_out  
-#>  9       9       2       [49 x 2]               26 deep_out  
-#> 10      10       2       [46 x 2]               26 deep_out  
+#>  1       1       1       [43 x 2]               18 flat      
+#>  2       2       3       [41 x 2]               26 deep_out  
+#>  3       3       1       [37 x 2]               18 flat      
+#>  4       4       1       [39 x 2]               18 flat      
+#>  5       5       1       [47 x 2]               18 flat      
+#>  6       6       2       [49 x 2]               26 deep_out  
+#>  7       7       3       [48 x 2]               26 deep_out  
+#>  8       8       1       [46 x 2]               18 flat      
+#>  9       9       1       [49 x 2]               18 flat      
+#> 10      10       2       [43 x 2]               26 deep_out  
 #> # ... with 110 more rows
 ```
+
+## Now with NFL sample data
 
 ``` r
 # Use online sample data from big data bowl
@@ -306,4 +250,91 @@ routes_data %>%
 #>  9         9       [45 x 2]               18 flat      
 #> 10        10       [45 x 2]               29 deep_out  
 #> # ... with 384 more rows
+```
+
+## Now with the higlight data from 903124
+
+``` r
+# Use online sample data from big data bowl
+
+# list all the files
+#tracking_files <- list.files(path = "Data/", pattern = "tracking_.*\\.csv")
+
+# Load all the data
+routes_data <- 
+  # create the tibble with the file names
+  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highligh_19_post.csv") %>%
+  # read the data in nested
+  mutate(data = map(file_name, read_routes_from_903124)) %>%
+  dplyr::select(-file_name) %>% 
+  unnest(cols = c(data))
+#> Warning: Missing column names filled in: 'X1' [1]
+
+# transform our curves
+routes_data <-
+  routes_data %>%
+  mutate(row = row_number()) %>%
+  mutate(data = pmap(list(data, left, line_of_scrimmage), 
+                     ~ cut_plays(..1) %>%
+                       flip_field_903124(., ..2, ..3)),
+         n = map_dbl(data, nrow)) %>%
+  filter(n >= 2) %>%
+  # left side of field is TRUE
+  mutate(data_same_sideline = purrr::map(data, 
+                                         ~ mutate(., 
+                                                  sof = 160/6 > first(y),
+                                                  y = if_else(sof, 160/3 - y, y),
+                                                  y = y - first(y)
+                                         ) %>%
+                                           dplyr::select(-sof)))  %>%
+  arrange(row)
+
+
+routes_data <-
+  routes_data %>%
+  ungroup() %>%
+  select(-row)
+
+
+fitted_clusters <-
+  routes_data %>%
+  mutate(curve_num = row_number()) %>%
+  unnest(cols = c(data_same_sideline)) %>%
+  select(curve_num, x, y) %>%
+  fit_new_data(nfl_em_results) %>%
+  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+
+fitted_clusters
+#> # A tibble: 76 x 4
+#>    curve_num           data cluster_assigned route_name 
+#>        <int> <list<df[,2]>>            <dbl> <chr>      
+#>  1         1       [57 x 2]               25 corner     
+#>  2         2       [57 x 2]               12 dig/over   
+#>  3         3       [57 x 2]               28 blocking   
+#>  4         4       [57 x 2]               19 blocking   
+#>  5         5       [57 x 2]                4 flat       
+#>  6         6       [61 x 2]                3 comeback   
+#>  7         7       [61 x 2]               27 corner     
+#>  8         8       [61 x 2]                8 go/vertical
+#>  9         9       [61 x 2]               13 blocking   
+#> 10        10       [61 x 2]                3 comeback   
+#> # ... with 66 more rows
+
+routes_data %>%
+  select(displayName, gameId, playId) %>%
+  bind_cols(fitted_clusters %>% select(route_name))
+#> # A tibble: 76 x 4
+#>    displayName         gameId playId route_name 
+#>    <chr>                <dbl>  <dbl> <chr>      
+#>  1 DeAndre Hopkins 2020010400   3187 corner     
+#>  2 Kenny Stills    2020010400   3187 dig/over   
+#>  3 Darren Fells    2020010400   3187 blocking   
+#>  4 Carlos Hyde     2020010400   3187 blocking   
+#>  5 DeAndre Carter  2020010400   3187 flat       
+#>  6 Taiwan Jones    2020010400   4780 comeback   
+#>  7 DeAndre Hopkins 2020010400   4780 corner     
+#>  8 Kenny Stills    2020010400   4780 go/vertical
+#>  9 Darren Fells    2020010400   4780 blocking   
+#> 10 DeAndre Carter  2020010400   4780 comeback   
+#> # ... with 66 more rows
 ```

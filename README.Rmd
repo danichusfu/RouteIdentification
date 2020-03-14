@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of RouteIdentification is to ...
+The goal of RouteIdentification is to clustery trajectory data sets like those found in sports analytics tracking data. This work was developed as part of the first Big Data Bowl and the methodology is written about in [JQAS](https://www.degruyter.com/view/j/jqas.ahead-of-print/jqas-2019-0047/jqas-2019-0047.xml?format=INT)
 
 ## Installation
 
@@ -30,7 +30,7 @@ install.packages("RouteIdentification")
 ```
  -->
  
-And the development version from [GitHub](https://github.com/) with:
+You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -108,6 +108,7 @@ fit_new_data(new_trajectory_data, nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 ```
 
+## Now with NFL sample data
 
 
 ```{r}
@@ -157,4 +158,66 @@ routes_data %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+```
+
+
+## Now with the higlight data from 903124
+
+
+```{r}
+# Use online sample data from big data bowl
+
+# list all the files
+#tracking_files <- list.files(path = "Data/", pattern = "tracking_.*\\.csv")
+
+# Load all the data
+routes_data <- 
+  # create the tibble with the file names
+  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highligh_19_post.csv") %>%
+  # read the data in nested
+  mutate(data = map(file_name, read_routes_from_903124)) %>%
+  dplyr::select(-file_name) %>% 
+  unnest(cols = c(data))
+
+# transform our curves
+routes_data <-
+  routes_data %>%
+  mutate(row = row_number()) %>%
+  mutate(data = pmap(list(data, left, line_of_scrimmage), 
+                     ~ cut_plays(..1) %>%
+                       flip_field_903124(., ..2, ..3)),
+         n = map_dbl(data, nrow)) %>%
+  filter(n >= 2) %>%
+  # left side of field is TRUE
+  mutate(data_same_sideline = purrr::map(data, 
+                                         ~ mutate(., 
+                                                  sof = 160/6 > first(y),
+                                                  y = if_else(sof, 160/3 - y, y),
+                                                  y = y - first(y)
+                                         ) %>%
+                                           dplyr::select(-sof)))  %>%
+  arrange(row)
+
+
+routes_data <-
+  routes_data %>%
+  ungroup() %>%
+  select(-row)
+
+
+fitted_clusters <-
+  routes_data %>%
+  mutate(curve_num = row_number()) %>%
+  unnest(cols = c(data_same_sideline)) %>%
+  select(curve_num, x, y) %>%
+  fit_new_data(nfl_em_results) %>%
+  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+
+fitted_clusters
+
+routes_data %>%
+  select(displayName, gameId, playId) %>%
+  bind_cols(fitted_clusters %>% select(route_name))
+
+
 ```
