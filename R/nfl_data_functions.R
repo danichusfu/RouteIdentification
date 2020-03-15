@@ -82,9 +82,17 @@ read_routes_from_csv <- function(file_name){
 # create a new reading function
 read_routes_from_903124 <- function(file_name){
 
+  # games   <- read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/games.csv",   col_types = cols())
+  # players <- read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/players.csv", col_types = cols())
+  # plays   <- read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/plays.csv",   col_types = cols())
+  # 
   data <-
     # read all of the data in
-    read_csv(file_name, col_types = cols()) %>%
+    read_csv(file_name, col_types = cols()) 
+  
+  data <-
+    data %>%
+    # Improved so their are no longer duplicates now
     distinct() %>%
     # drop unnescceary columns
     #dplyr::select(., nflId, gameId = game_id, playId = play_id, x, y, event = event_name, position) %>%
@@ -92,14 +100,16 @@ read_routes_from_903124 <- function(file_name){
     # keep only the passing plays
     group_by(gameId, playId) %>%
     mutate(pass_play = sum(event %in% "pass_forward") >= 1,
-           offense   = sum(position %in% "QB") >= 1) %>%
+           offense   = position %in% c("C", "FB","G", 
+                                       "NT", "OG", "OT", "QB", "RB", 
+                                       "T", "TE", "WR")) %>%
     filter(pass_play, offense)
 
 
   play_direction <-
     data %>%
     group_by(gameId, playId) %>%
-    filter(event == "ball_snap" | time == max(time)) %>%
+    filter(event %in% c("ball_snap", "snap_direct") | time == max(time)) %>%
     group_by(gameId, playId, time) %>%
     summarise(mean_team = mean(x)) %>%
     mutate(time = c("ball_snap", "end_play")) %>%

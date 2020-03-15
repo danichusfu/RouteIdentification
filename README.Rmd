@@ -173,7 +173,7 @@ routes_data %>%
 # Load all the data
 routes_data <- 
   # create the tibble with the file names
-  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highligh_19_post.csv") %>%
+  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv") %>%
   # read the data in nested
   mutate(data = map(file_name, read_routes_from_903124)) %>%
   dplyr::select(-file_name) %>% 

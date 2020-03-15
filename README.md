@@ -86,20 +86,20 @@ em_results <-
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 0.53 sec elapsed
+#> 0.56 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
 #> 0.03 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 0.53 sec elapsed
-#> [1] 3647.155
+#> 0.51 sec elapsed
+#> [1] 3392.626
 #> [1] "m_step time"
-#> 0.02 sec elapsed
+#> 0.01 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 0.52 sec elapsed
-#> 1.63 sec elapsed
+#> 0.54 sec elapsed
+#> 1.69 sec elapsed
 
 
 cluster_means <-
@@ -117,9 +117,9 @@ nested_trajectory_data %>%
 #> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            1    12
-#> 2       2            3     4
-#> 3       3            2     4
+#> 1       1            3     5
+#> 2       2            2     5
+#> 3       3            1    10
 
 nested_trajectory_data %>%
   bind_cols(as_tibble(em_results$Pik)) %>%
@@ -162,9 +162,9 @@ new_data_fit %>%
 #> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                1    46
-#> 2       2                3    31
-#> 3       3                2    43
+#> 1       1                3    50
+#> 2       2                2    38
+#> 3       3                1    32
 ```
 
 ``` r
@@ -172,18 +172,18 @@ new_data_fit %>%
 fit_new_data(new_trajectory_data, nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 #> # A tibble: 120 x 5
-#>    curve_i cluster           data cluster_assigned route_name
-#>      <int>   <dbl> <list<df[,2]>>            <dbl> <chr>     
-#>  1       1       1       [43 x 2]               18 flat      
-#>  2       2       3       [41 x 2]               26 deep_out  
-#>  3       3       1       [37 x 2]               18 flat      
-#>  4       4       1       [39 x 2]               18 flat      
-#>  5       5       1       [47 x 2]               18 flat      
-#>  6       6       2       [49 x 2]               26 deep_out  
-#>  7       7       3       [48 x 2]               26 deep_out  
-#>  8       8       1       [46 x 2]               18 flat      
-#>  9       9       1       [49 x 2]               18 flat      
-#> 10      10       2       [43 x 2]               26 deep_out  
+#>    curve_i cluster data              cluster_assigned route_name
+#>      <int>   <dbl> <list>                       <dbl> <chr>     
+#>  1       1       1 <tibble [46 x 2]>               26 deep_out  
+#>  2       2       1 <tibble [43 x 2]>               26 deep_out  
+#>  3       3       3 <tibble [48 x 2]>               26 deep_out  
+#>  4       4       2 <tibble [47 x 2]>               26 deep_out  
+#>  5       5       3 <tibble [40 x 2]>               26 deep_out  
+#>  6       6       2 <tibble [43 x 2]>               26 deep_out  
+#>  7       7       2 <tibble [41 x 2]>               26 deep_out  
+#>  8       8       3 <tibble [36 x 2]>               26 deep_out  
+#>  9       9       1 <tibble [48 x 2]>               26 deep_out  
+#> 10      10       3 <tibble [46 x 2]>               26 deep_out  
 #> # ... with 110 more rows
 ```
 
@@ -237,18 +237,18 @@ routes_data %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 #> # A tibble: 394 x 4
-#>    curve_num           data cluster_assigned route_name
-#>        <int> <list<df[,2]>>            <dbl> <chr>     
-#>  1         1       [63 x 2]               30 dig/over  
-#>  2         2       [63 x 2]                5 go/seam   
-#>  3         3       [63 x 2]               27 corner    
-#>  4         4       [63 x 2]               11 flat      
-#>  5         5       [63 x 2]                5 go/seam   
-#>  6         6       [45 x 2]               27 corner    
-#>  7         7       [45 x 2]                4 flat      
-#>  8         8       [45 x 2]                2 dig/over  
-#>  9         9       [45 x 2]               18 flat      
-#> 10        10       [45 x 2]               29 deep_out  
+#>    curve_num data              cluster_assigned route_name
+#>        <int> <list>                       <dbl> <chr>     
+#>  1         1 <tibble [63 x 2]>               30 dig/over  
+#>  2         2 <tibble [63 x 2]>                5 go/seam   
+#>  3         3 <tibble [63 x 2]>               27 corner    
+#>  4         4 <tibble [63 x 2]>               11 flat      
+#>  5         5 <tibble [63 x 2]>                5 go/seam   
+#>  6         6 <tibble [45 x 2]>               27 corner    
+#>  7         7 <tibble [45 x 2]>                4 flat      
+#>  8         8 <tibble [45 x 2]>                2 dig/over  
+#>  9         9 <tibble [45 x 2]>               18 flat      
+#> 10        10 <tibble [45 x 2]>               29 deep_out  
 #> # ... with 384 more rows
 ```
 
@@ -263,7 +263,7 @@ routes_data %>%
 # Load all the data
 routes_data <- 
   # create the tibble with the file names
-  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highligh_19_post.csv") %>%
+  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv") %>%
   # read the data in nested
   mutate(data = map(file_name, read_routes_from_903124)) %>%
   dplyr::select(-file_name) %>% 
@@ -305,36 +305,36 @@ fitted_clusters <-
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
 fitted_clusters
-#> # A tibble: 76 x 4
-#>    curve_num           data cluster_assigned route_name 
-#>        <int> <list<df[,2]>>            <dbl> <chr>      
-#>  1         1       [57 x 2]               25 corner     
-#>  2         2       [57 x 2]               12 dig/over   
-#>  3         3       [57 x 2]               28 blocking   
-#>  4         4       [57 x 2]               19 blocking   
-#>  5         5       [57 x 2]                4 flat       
-#>  6         6       [61 x 2]                3 comeback   
-#>  7         7       [61 x 2]               27 corner     
-#>  8         8       [61 x 2]                8 go/vertical
-#>  9         9       [61 x 2]               13 blocking   
-#> 10        10       [61 x 2]                3 comeback   
-#> # ... with 66 more rows
+#> # A tibble: 124 x 4
+#>    curve_num data              cluster_assigned route_name
+#>        <int> <list>                       <dbl> <chr>     
+#>  1         1 <tibble [59 x 2]>               28 blocking  
+#>  2         2 <tibble [59 x 2]>               11 flat      
+#>  3         3 <tibble [59 x 2]>               20 post      
+#>  4         4 <tibble [59 x 2]>               10 flat      
+#>  5         5 <tibble [59 x 2]>                5 go/seam   
+#>  6         6 <tibble [57 x 2]>               25 corner    
+#>  7         7 <tibble [57 x 2]>               12 dig/over  
+#>  8         8 <tibble [57 x 2]>               28 blocking  
+#>  9         9 <tibble [57 x 2]>               19 blocking  
+#> 10        10 <tibble [57 x 2]>                4 flat      
+#> # ... with 114 more rows
 
 routes_data %>%
   select(displayName, gameId, playId) %>%
   bind_cols(fitted_clusters %>% select(route_name))
-#> # A tibble: 76 x 4
-#>    displayName         gameId playId route_name 
-#>    <chr>                <dbl>  <dbl> <chr>      
-#>  1 DeAndre Hopkins 2020010400   3187 corner     
-#>  2 Kenny Stills    2020010400   3187 dig/over   
-#>  3 Darren Fells    2020010400   3187 blocking   
-#>  4 Carlos Hyde     2020010400   3187 blocking   
-#>  5 DeAndre Carter  2020010400   3187 flat       
-#>  6 Taiwan Jones    2020010400   4780 comeback   
-#>  7 DeAndre Hopkins 2020010400   4780 corner     
-#>  8 Kenny Stills    2020010400   4780 go/vertical
-#>  9 Darren Fells    2020010400   4780 blocking   
-#> 10 DeAndre Carter  2020010400   4780 comeback   
-#> # ... with 66 more rows
+#> # A tibble: 124 x 4
+#>    displayName         gameId playId route_name
+#>    <chr>                <dbl>  <dbl> <chr>     
+#>  1 Luke Willson    2020010501   2688 blocking  
+#>  2 Tyler Lockett   2020010501   2688 flat      
+#>  3 David Moore     2020010501   2688 post      
+#>  4 Travis Homer    2020010501   2688 flat      
+#>  5 D.K. Metcalf    2020010501   2688 go/seam   
+#>  6 DeAndre Hopkins 2020010400   3187 corner    
+#>  7 Kenny Stills    2020010400   3187 dig/over  
+#>  8 Darren Fells    2020010400   3187 blocking  
+#>  9 Carlos Hyde     2020010400   3187 blocking  
+#> 10 DeAndre Carter  2020010400   3187 flat      
+#> # ... with 114 more rows
 ```
