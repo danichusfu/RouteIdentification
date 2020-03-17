@@ -22,6 +22,10 @@ install.packages("RouteIdentification")
 ```
  -->
 
+See this great link for help getting github auth to install the package
+from the private repo. [This is the great
+link.](https://happygitwithr.com/github-pat.html)
+
 You can install the development version from
 [GitHub](https://github.com/) with:
 
@@ -86,20 +90,125 @@ em_results <-
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 0.56 sec elapsed
+#> 1.96 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.03 sec elapsed
+#> 0.14 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 0.51 sec elapsed
-#> [1] 3392.626
+#> 1.93 sec elapsed
+#> [1] 1254.84
 #> [1] "m_step time"
-#> 0.01 sec elapsed
+#> 0.09 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 0.54 sec elapsed
-#> 1.69 sec elapsed
+#> 1.66 sec elapsed
+#> [1] 1255.595
+#> [1] "m_step time"
+#> 0.07 sec elapsed
+#> [1] 4
+#> [1] "e_step time"
+#> 1.88 sec elapsed
+#> [1] 1255.937
+#> [1] "m_step time"
+#> 0.08 sec elapsed
+#> [1] 5
+#> [1] "e_step time"
+#> 1.86 sec elapsed
+#> [1] 1256.171
+#> [1] "m_step time"
+#> 0.03 sec elapsed
+#> [1] 6
+#> [1] "e_step time"
+#> 1.62 sec elapsed
+#> [1] 1256.824
+#> [1] "m_step time"
+#> 0.1 sec elapsed
+#> [1] 7
+#> [1] "e_step time"
+#> 1.89 sec elapsed
+#> [1] 1258.31
+#> [1] "m_step time"
+#> 0.08 sec elapsed
+#> [1] 8
+#> [1] "e_step time"
+#> 1.9 sec elapsed
+#> [1] 1259.031
+#> [1] "m_step time"
+#> 0.08 sec elapsed
+#> [1] 9
+#> [1] "e_step time"
+#> 1.94 sec elapsed
+#> [1] 1259.482
+#> [1] "m_step time"
+#> 0.08 sec elapsed
+#> [1] 10
+#> [1] "e_step time"
+#> 1.86 sec elapsed
+#> [1] 1259.832
+#> [1] "m_step time"
+#> 0.07 sec elapsed
+#> [1] 11
+#> [1] "e_step time"
+#> 1.44 sec elapsed
+#> [1] 1260.664
+#> [1] "m_step time"
+#> 0.03 sec elapsed
+#> [1] 12
+#> [1] "e_step time"
+#> 0.92 sec elapsed
+#> [1] 1262.393
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 13
+#> [1] "e_step time"
+#> 0.97 sec elapsed
+#> [1] 1263.528
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 14
+#> [1] "e_step time"
+#> 0.97 sec elapsed
+#> [1] 1263.74
+#> [1] "m_step time"
+#> 0.04 sec elapsed
+#> [1] 15
+#> [1] "e_step time"
+#> 0.83 sec elapsed
+#> [1] 1263.775
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 16
+#> [1] "e_step time"
+#> 1.04 sec elapsed
+#> [1] 1263.781
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 17
+#> [1] "e_step time"
+#> 1.2 sec elapsed
+#> [1] 1263.783
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 18
+#> [1] "e_step time"
+#> 1.3 sec elapsed
+#> [1] 1263.783
+#> [1] "m_step time"
+#> 0.09 sec elapsed
+#> [1] 19
+#> [1] "e_step time"
+#> 1.22 sec elapsed
+#> [1] 1263.783
+#> [1] "m_step time"
+#> 0.03 sec elapsed
+#> [1] 20
+#> [1] "e_step time"
+#> 0.99 sec elapsed
+#> [1] 1263.783
+#> [1] "m_step time"
+#> 0.04 sec elapsed
+#> 30.68 sec elapsed
 
 
 cluster_means <-
@@ -114,12 +223,13 @@ nested_trajectory_data %>%
   filter(prob == max(prob)) %>%
   ungroup() %>%
   count(cluster, pred_cluster)
-#> # A tibble: 3 x 3
+#> # A tibble: 4 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            3     5
-#> 2       2            2     5
-#> 3       3            1    10
+#> 1       1            1     6
+#> 2       2            2     6
+#> 3       2            3     6
+#> 4       3            1     2
 
 nested_trajectory_data %>%
   bind_cols(as_tibble(em_results$Pik)) %>%
@@ -159,12 +269,13 @@ new_data_fit <- fit_new_data(new_trajectory_data, em_results)
 
 new_data_fit %>%
   count(cluster, cluster_assigned)
-#> # A tibble: 3 x 3
+#> # A tibble: 4 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                3    50
-#> 2       2                2    38
-#> 3       3                1    32
+#> 1       1                1    40
+#> 2       2                2    26
+#> 3       2                3    17
+#> 4       3                1    37
 ```
 
 ``` r
@@ -174,16 +285,16 @@ fit_new_data(new_trajectory_data, nfl_em_results) %>%
 #> # A tibble: 120 x 5
 #>    curve_i cluster data              cluster_assigned route_name
 #>      <int>   <dbl> <list>                       <dbl> <chr>     
-#>  1       1       1 <tibble [46 x 2]>               26 deep_out  
-#>  2       2       1 <tibble [43 x 2]>               26 deep_out  
-#>  3       3       3 <tibble [48 x 2]>               26 deep_out  
-#>  4       4       2 <tibble [47 x 2]>               26 deep_out  
-#>  5       5       3 <tibble [40 x 2]>               26 deep_out  
-#>  6       6       2 <tibble [43 x 2]>               26 deep_out  
-#>  7       7       2 <tibble [41 x 2]>               26 deep_out  
-#>  8       8       3 <tibble [36 x 2]>               26 deep_out  
-#>  9       9       1 <tibble [48 x 2]>               26 deep_out  
-#> 10      10       3 <tibble [46 x 2]>               26 deep_out  
+#>  1       1       3 <tibble [46 x 2]>                9 comeback  
+#>  2       2       1 <tibble [42 x 2]>               29 deep_out  
+#>  3       3       2 <tibble [42 x 2]>               26 deep_out  
+#>  4       4       1 <tibble [40 x 2]>               29 deep_out  
+#>  5       5       3 <tibble [39 x 2]>                9 comeback  
+#>  6       6       1 <tibble [40 x 2]>               29 deep_out  
+#>  7       7       3 <tibble [44 x 2]>                9 comeback  
+#>  8       8       2 <tibble [37 x 2]>               26 deep_out  
+#>  9       9       2 <tibble [43 x 2]>               26 deep_out  
+#> 10      10       2 <tibble [47 x 2]>               26 deep_out  
 #> # ... with 110 more rows
 ```
 

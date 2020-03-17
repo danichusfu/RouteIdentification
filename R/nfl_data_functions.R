@@ -7,15 +7,15 @@
 read_routes_from_csv <- function(file_name){
 
   # Load Basic Data
-  games   <- read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/games.csv",   col_types = cols())
-  players <- read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/players.csv", col_types = cols())
-  plays   <- read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/plays.csv",   col_types = cols())
+  games   <- readr::read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/games.csv",   col_types = cols())
+  players <- readr::read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/players.csv", col_types = cols())
+  plays   <- readr::read_csv("https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/plays.csv",   col_types = cols())
 
 
   # Extract which plays were "passes", had dropbacks I think is a better definition
   pass_playIds <-
     plays %>%
-    drop_na(PassResult) %>%
+    tidyr::drop_na(PassResult) %>%
     dplyr::select(gameId, playId, quarter)
 
   # make a key to find player position
@@ -25,15 +25,15 @@ read_routes_from_csv <- function(file_name){
   # subset that group to only grab the ones who "run routes often?
   route_runners_pos_id_key <-
     player_pos_id_key %>%
-    filter(PositionAbbr %in% c("WR", "TE", "RB", "FB"))
+    dplyr::filter(PositionAbbr %in% c("WR", "TE", "RB", "FB"))
 
   data <-
     # read all of the data in
-    read_csv(file_name, col_types = cols()) %>%
+    readr::read_csv(file_name, col_types = cols()) %>%
     # drop unnescceary columns
     dplyr::select(., nflId, gameId, playId, x, y, frame.id, team, event, jerseyNumber) %>%
     # keep only the passing plays
-    inner_join(., pass_playIds, by = c("gameId", "playId"))
+    dplyr::inner_join(., pass_playIds, by = c("gameId", "playId"))
 
   play_direction <-
     data %>%

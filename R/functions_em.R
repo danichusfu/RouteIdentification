@@ -12,10 +12,10 @@
 generate_random_cluster_controls <- function(number_of_clusters = 5, P = 3){
   cluster_controls <-
     tibble::tibble(cluster_num = 1:number_of_clusters) %>%
-    mutate(Beta = map(cluster_num, ~ tibble(x = c(5, round(10 * runif(P))),
-                                            y = c(0, round(10 * runif(P))))),
-           sigma_2 = list(tibble(x = 0.001,
-                                 y = 0.001)))
+    dplyr::mutate(Beta = purrr::map(cluster_num, ~ tibble::tibble(x = c(5, round(10 * runif(P))),
+                                                                  y = c(0, round(10 * runif(P))))),
+                   sigma_2 = list(tibble::tibble(x = 0.001,
+                                                 y = 0.001)))
 
   return(cluster_controls)
 }
@@ -31,30 +31,31 @@ generate_sample_data <- function(cluster_controls, P = 3, number_of_curves = 120
 
 
   data <-
-    tibble(curve_i = 1:number_of_curves) %>%
-    mutate(cluster_num = map_dbl(curve_i, ~ ceiling(nrow(cluster_controls) * runif(1))),
-           n_i = map_dbl(curve_i, ~ round(20 + runif(1, 0.5, 1) * 30)),
-           t_i = map(n_i, ~ tibble(t = (1:. - 1)/(.-1))),
-           T_i = map(t_i, ~ mutate(., p = list(0:P)) %>%
-                       unnest(cols = c(p)) %>%
-                       mutate(D_p_of_t = choose(P, p) * t^p * (1 - t)^(P - p)) %>%
-                       spread(p, D_p_of_t, sep = "_") %>%
-                       select(-t))) %>%
-    left_join(cluster_controls, by = "cluster_num") %>%
-    mutate(x = pmap(list(T_i, Beta, sigma_2), ~ tibble(x = as.vector(as.matrix(..1) %*% as.matrix(..2[, 1]) +
+    tibble::tibble(curve_i = 1:number_of_curves) %>%
+    dplyr::mutate(cluster_num = map_dbl(curve_i, ~ ceiling(nrow(cluster_controls) * runif(1))),
+           n_i = purrr::map_dbl(curve_i, ~ round(20 + runif(1, 0.5, 1) * 30)),
+           t_i = purrr::map(n_i, ~ tibble(t = (1:. - 1)/(.-1))),
+           T_i = purrr::map(t_i, ~ mutate(., p = list(0:P)) %>%
+                       tidyr::unnest(cols = c(p)) %>%
+                       dplyr::mutate(D_p_of_t = choose(P, p) * t^p * (1 - t)^(P - p)) %>%
+                       tidyr::spread(p, D_p_of_t, sep = "_") %>%
+                       dplyr::select(-t))) %>%
+    dplyr::left_join(cluster_controls, by = "cluster_num") %>%
+    dplyr::mutate(x = purrr::pmap(list(T_i, Beta, sigma_2), 
+                                  ~ tibble(x = as.vector(as.matrix(..1) %*% as.matrix(..2[, 1]) +
                                                                        MASS::mvrnorm(n = 1,
                                                                                      mu = rep(0, nrow(..1)),
                                                                                      Sigma = diag(..3,
                                                                                                   nrow = nrow(..1),
                                                                                                   ncol = nrow(..1)))))),
-           y = pmap(list(T_i, Beta, sigma_2), ~ tibble(y = as.vector(as.matrix(..1) %*% as.matrix(..2[, 2]) +
+           y = purrr::pmap(list(T_i, Beta, sigma_2), ~ tibble(y = as.vector(as.matrix(..1) %*% as.matrix(..2[, 2]) +
                                                                        MASS::mvrnorm(n = 1,
                                                                                      mu = rep(0, nrow(..1)),
                                                                                      Sigma = diag(..3,
                                                                                                   nrow = nrow(..1),
                                                                                                   ncol = nrow(..1)))))))
 
-  data <- data %>% select(curve_i, cluster_num, n_i, t_i, T_i, x, y)
+  data <- data %>% dplyr::select(curve_i, cluster_num, n_i, t_i, T_i, x, y)
 
   return(data)
 }
@@ -99,84 +100,84 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
   # create data for em algorithm
   prepared_trajectory_data <-
     trajectory_data %>%
-    nest(data = c(x, y)) %>%
-    mutate(curve_i = row_number()) %>%
-    mutate(n_i = map_dbl(data, nrow),
-           t_i = map(n_i, ~ tibble(t = (1:. - 1)/(.-1))),
-           T_i = map(t_i, ~ mutate(., p = list(0:P)) %>%
-                       unnest(cols = c(p)) %>%
-                       mutate(D_p_of_t = choose(P, p) * t^p * (1 - t)^(P - p)) %>%
-                       spread(p, D_p_of_t, sep = "_") %>%
-                       select(-t))) %>%
-    select(data, curve_i, n_i, t_i, T_i) %>%
-    arrange(curve_i) %>%
+    tidyr::nest(data = c(x, y)) %>%
+    dplyr::mutate(curve_i = row_number()) %>%
+    dplyr::mutate(n_i = purrr::map_dbl(data, nrow),
+           t_i = purrr::map(n_i, ~ tibble::tibble(t = (1:. - 1)/(.-1))),
+           T_i = purrr::map(t_i, ~ dplyr::mutate(., p = list(0:P)) %>%
+                       tidyr::unnest(cols = c(p)) %>%
+                       dplyr::mutate(D_p_of_t = choose(P, p) * t^p * (1 - t)^(P - p)) %>%
+                       tidyr::spread(p, D_p_of_t, sep = "_") %>%
+                       dplyr::select(-t))) %>%
+    dplyr::select(data, curve_i, n_i, t_i, T_i) %>%
+    dplyr::arrange(curve_i) %>%
     ungroup()
 
   # create X matrix
   X <-
     prepared_trajectory_data %>%
-    select(T_i) %>%
-    unnest(cols = c(T_i)) %>%
+    dplyr::select(T_i) %>%
+    tidyr::unnest(cols = c(T_i)) %>%
     Matrix::as.matrix()
 
   # create Y matrix
   Y <-
     prepared_trajectory_data %>%
-    select(data) %>%
-    unnest(cols = data) %>%
+    dplyr::select(data) %>%
+    tidyr::unnest(cols = data) %>%
     Matrix::as.matrix()
 
   SEQ <-
     prepared_trajectory_data %>%
-    select(n_i) %>%
-    mutate(n_i = cumsum(n_i)) %>%
+    dplyr::select(n_i) %>%
+    dplyr::mutate(n_i = cumsum(n_i)) %>%
     Matrix::as.matrix()
 
   INDEX <-
     prepared_trajectory_data %>%
-    select(curve_i, t_i) %>%
-    unnest(cols = c(t_i)) %>%
-    select(curve_i)
+    dplyr::select(curve_i, t_i) %>%
+    tidyr::unnest(cols = c(t_i)) %>%
+    dplyr::select(curve_i)
 
   ##################### INIT
 
   kmean_data <-
     prepared_trajectory_data %>%
-    transmute(ends = map(data, ~ filter(., row_number() == max(row_number())) %>% select(x, y))) %>%
-    unnest(cols = c(ends))
+    dplyr::transmute(ends = purrr::map(data, ~ filter(., row_number() == max(row_number())) %>% dplyr::select(x, y))) %>%
+    tidyr::unnest(cols = c(ends))
 
 
   kmeans_results <- kmeans(kmean_data, centers = K, iter.max = 100)
 
   kmean_data %>%
-    mutate(cluster = kmeans_results$cluster) %>%
-    ggplot(aes(x = x, y = y, colour = factor(cluster))) +
-    geom_point() +
-    theme_bw()
+    dplyr::mutate(cluster = kmeans_results$cluster) %>%
+    ggplot2::ggplot(aes(x = x, y = y, colour = factor(cluster))) +
+    ggplot2::geom_point() +
+    ggplot2::theme_bw()
 
   init_clusters <-
     prepared_trajectory_data %>%
-    mutate(cluster = kmeans_results$cluster) %>%
-    unnest(data) %>%
-    select(cluster)
+    dplyr::mutate(cluster = kmeans_results$cluster) %>%
+    tidyr::unnest(data) %>%
+    dplyr::select(cluster)
 
 
   Alpha <-
     init_clusters %>%
-    group_by(cluster) %>%
-    summarise(n = n()) %>%
-    mutate(prop = n/sum(n)) %>%
-    pull(prop)
+    dplyr::group_by(cluster) %>%
+    dplyr::summarise(n = n()) %>%
+    dplyr::mutate(prop = n/sum(n)) %>%
+    purrr::pull(prop)
 
-  c <- init_clusters %>% pull(cluster)
+  c <- init_clusters %>% purrr::pull(cluster)
 
 
   calc_Piik <- function(data, Sigma){
     data %>%
-      transmute(Piik = pmap_dbl(list(x, y, x1, y1), ~ dmvnorm(c(..1, ..2),
+      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ dmvnorm(c(..1, ..2),
                                                               c(..3, ..4),
                                                               Sigma))) %>%
-      bind_cols(as_tibble(INDEX))
+      dplyr::bind_cols(as_tibble(INDEX))
   }
 
   Beta <- list()
@@ -190,7 +191,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
 
   n <- length(SEQ)
   N <- SEQ[n]
-  curve_lengths <- prepared_trajectory_data %>% select(n_i)
+  curve_lengths <- prepared_trajectory_data %>% dplyr::select(n_i)
 
   #################################################################################
   l_hood <- -Inf
@@ -206,32 +207,32 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     tic()
 
     data_Piik <-
-      tibble(Beta, Sigma) %>%
-      mutate(k = row_number()) %>%
+      tibble::tibble(Beta, Sigma) %>%
+      dplyr::mutate(k = row_number()) %>%
       #partition() %>%
-      mutate(X_Beta = map(Beta,
+      dplyr::mutate(X_Beta = purrr::map(Beta,
                           ~ Matrix::as.matrix(X) %*% .x %>%
-                            as_tibble() %>%
-                            bind_cols(as_tibble(Matrix::as.matrix(Y))))) %>%
-      mutate(Piik = map2(X_Beta, Sigma, calc_Piik)) %>%
-      select(k, Piik) %>%
+                            tibble::as_tibble() %>%
+                            dplyr::bind_cols(as_tibble(Matrix::as.matrix(Y))))) %>%
+      dplyr::mutate(Piik = purrr::map2(X_Beta, Sigma, calc_Piik)) %>%
+      dplyr::select(k, Piik) %>%
       #collect() %>%
-      unnest(cols = c(Piik))
+      tidyr::unnest(cols = c(Piik))
 
     scale_m <-
       data_Piik %>%
-      ungroup() %>%
-      summarise(mean = mean(Piik)) %>%
-      pull(mean)
+      dplyr::ungroup() %>%
+      dplyr::summarise(mean = mean(Piik)) %>%
+      purrr::pull(mean)
 
     Pik <-
       data_Piik %>%
-      mutate(Piik = Piik/scale_m) %>%
-      group_by(curve_i, k) %>%
-      summarise(Pik = prod(Piik))  %>%
-      spread(k, Pik) %>%
-      ungroup() %>%
-      select(-curve_i) %>%
+      dplyr::mutate(Piik = Piik/scale_m) %>%
+      dplyr::group_by(curve_i, k) %>%
+      dplyr::summarise(Pik = prod(Piik))  %>%
+      tidyr::spread(k, Pik) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(-curve_i) %>%
       Matrix::as.matrix()
 
     Pik <- Pik * Alpha
@@ -281,24 +282,24 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
 
     weights <-
       Pik %>%
-      as_tibble() %>%
-      mutate(curve_i = row_number()) %>%
-      right_join(INDEX, by = "curve_i") %>%
-      select(matches("\\d")) %>%
+      tibble::as_tibble() %>%
+      dplyr::mutate(curve_i = row_number()) %>%
+      dplyr::right_join(INDEX, by = "curve_i") %>%
+      dplyr::select(matches("\\d")) %>%
       as.list()
 
     param_updates <-
-      tibble(k = 1:K, weights = weights) %>%
-      mutate(weights = map(weights, ~ Matrix::Diagonal(x = .))) %>%
+      tibble::tibble(k = 1:K, weights = weights) %>%
+      dplyr::mutate(weights = purrr::map(weights, ~ Matrix::Diagonal(x = .))) %>%
       #partition() %>%
-      mutate(Beta_new  = map(weights, ~ calc_new_beta(., X, Y)),
-             Sigma_new = map2(weights, Beta_new, ~ calc_new_sigma(.x, X, Y, .y)),
-             Beta_new = map(Beta_new, as.matrix)) %>%
+      dplyr::mutate(Beta_new  = purrr::map(weights, ~ calc_new_beta(., X, Y)),
+                    Sigma_new = purrr::map2(weights, Beta_new, ~ calc_new_sigma(.x, X, Y, .y)),
+                    Beta_new  = purrr::map(Beta_new, as.matrix)) %>%
       #collect() %>%
-      arrange(k)
+      dplyr::arrange(k)
 
-    Beta <- param_updates %>% pull(Beta_new)
-    Sigma <- param_updates %>% pull(Sigma_new)
+    Beta <- param_updates %>% purrr::pull(Beta_new)
+    Sigma <- param_updates %>% purrr::pull(Sigma_new)
 
     #############################################################################
     toc()
@@ -329,22 +330,22 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
 
 plot_cluster_means <- function(em_results){
   Beta <- em_results$Beta
-  tibble(Beta = Beta) %>%
-    mutate(mean_curve = map(Beta, ~ bezier(t = seq(0, 1, by = 0.1), p = .) %>% as_tibble()),
-           cluster = row_number()) %>%
-    select(-Beta) %>%
-    unnest() %>%
-    ggplot(aes(x = V2, y = V1, colour = factor(cluster))) +
-    geom_path() +
-    coord_fixed() +
-    theme_bw() +
-    theme(legend.position = "none",
-          axis.title.x = element_blank(),
-          axis.text.x  = element_blank(),
-          axis.ticks.x = element_blank(),
-          axis.title.y = element_blank(),
-          axis.text.y  = element_blank(),
-          axis.ticks.y = element_blank())
+  tibble::tibble(Beta = Beta) %>%
+    dplyr::mutate(mean_curve = purrr::map(Beta, ~ bezier(t = seq(0, 1, by = 0.1), p = .) %>% tibble::as_tibble()),
+           cluster = dplyr::row_number()) %>%
+    dplyr::select(-Beta) %>%
+    tidyr::unnest() %>%
+    ggplot2::ggplot(aes(x = V2, y = V1, colour = factor(cluster))) +
+    ggplot2::geom_path() +
+    ggplot2::coord_fixed() +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none",
+                    axis.title.x = ggplot2::element_blank(),
+                    axis.text.x  = ggplot2::element_blank(),
+                    axis.ticks.x = ggplot2::element_blank(),
+                    axis.title.y = ggplot2::element_blank(),
+                    axis.text.y  = ggplot2::element_blank(),
+                    axis.ticks.y = ggplot2::element_blank())
 }
 
 #' reorder clusters so that the biggest ones are numbered 1 and smallest n
@@ -364,15 +365,15 @@ reorder_clusters <- function(em_results){
 
   # reorder by depth
   reordered <-
-    tibble(Beta, Sigma, Alpha) %>%
-    mutate(rank = dense_rank(-Alpha),
-           row  = row_number()) %>%
-    arrange(rank)
+    tibble::tibble(Beta, Sigma, Alpha) %>%
+    dplyr::mutate(rank = dplyr::dense_rank(-Alpha),
+                  row  = dplyr::row_number()) %>%
+    dplyr::arrange(rank)
 
   # Reorder all of the variables
   row <-
     reordered %>%
-    pull(row)
+    purrr::pull(row)
 
   Pik <- Pik[, row]
   colnames(Pik) <- 1:K
@@ -380,15 +381,15 @@ reorder_clusters <- function(em_results){
 
   Beta <-
     reordered %>%
-    pull(Beta)
+    purrr::pull(Beta)
 
   Sigma <-
     reordered %>%
-    pull(Sigma)
+    purrr::pull(Sigma)
 
   Alpha <-
     reordered %>%
-    pull(Alpha)
+    purrr::pull(Alpha)
 
   em_results <-
     list("l_hood" = em_results$l_hood,
@@ -409,10 +410,12 @@ reorder_clusters <- function(em_results){
 extract_cluster_means <- function(em_results){
   Beta <- em_results$Beta
   cluster_means <-
-    tibble(Beta = Beta) %>%
-    mutate(mean_curve = map(Beta, ~ bezier(t = seq(0, 1, by = 0.05), p = .) %>% as_tibble()),
-           cluster = row_number()) %>%
-    select(-Beta) %>%
-    unnest(cols = c(mean_curve))
+    tibble::tibble(Beta = Beta) %>%
+    dplyr::mutate(mean_curve = purrr::map(Beta, 
+                                          ~ bezier(t = seq(0, 1, by = 0.05), p = .) %>% 
+                                            tibble::as_tibble()),
+                  cluster = dplyr::row_number()) %>%
+    dplyr::select(-Beta) %>%
+    tidyr::unnest(cols = c(mean_curve))
   return(cluster_means)
 }

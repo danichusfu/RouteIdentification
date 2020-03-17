@@ -30,6 +30,8 @@ install.packages("RouteIdentification")
 ```
  -->
  
+See this great link for help getting github auth to install the package from the private repo. [This is the great link.](https://happygitwithr.com/github-pat.html)
+ 
 You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
