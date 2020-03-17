@@ -46,95 +46,29 @@ new_data_fit %>%
 
 ## NFL Data example
 
-# Load all the data
-routes_data <- 
-  # create the tibble with the file names
-  tibble(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv") %>%
-  # read the data in nested
-  mutate(data = map(file_name, read_routes_from_csv)) %>%
-  dplyr::select(-file_name) %>% 
-  unnest(cols = c(data))
+# Parse NFL data based on file input
+nfl_bdb_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv")
 
-# Transform our curves
-routes_data <-
-  routes_data %>%
-  mutate(row = row_number()) %>%
-  mutate(data = pmap(list(data, team, direction_left, line_of_scrimmage), 
-                     ~ cut_plays(..1) %>%
-                       flip_field(., ..2, ..3, ..4)),
-         n = map_dbl(data, nrow)) %>%
-  filter(n >= 2) %>%
-  # left side of field is TRUE
-  mutate(data_same_sideline = purrr::map(data, 
-                                         ~ mutate(., 
-                                                  sof = 160/6 > first(y),
-                                                  y = if_else(sof, 160/3 - y, y),
-                                                  y = y - first(y)
-                                         ) %>%
-                                           dplyr::select(-sof)))  %>%
-  arrange(row)
-
-# Formatting fix
-routes_data <-
-  routes_data %>%
-  ungroup() %>%
-  select(-row)
-
-# nfl_em_results and cluster_route_map are objects that exist within this package and can be called freely
-routes_data %>%
-  mutate(curve_num = row_number()) %>%
-  unnest(cols = c(data_same_sideline)) %>%
+nfl_bdb_sample %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
+# Overview of the assigned routes
+nfl_bdb_sample %>%
+  select(displayName, gameId, playId) %>%
+  bind_cols(fitted_clusters %>% select(route_name))
 
 ## Another NFL example: NextGenStats Scraped Data (compliments to @903124S)
 
-# Load all the data
-routes_data <- 
-  # create the tibble with the file names
-  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv") %>%
-  # read the data in nested
-  mutate(data = map(file_name, read_routes_from_903124)) %>%
-  dplyr::select(-file_name) %>% 
-  unnest(cols = c(data))
+nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv")
 
-# transform our curves
-routes_data <-
-  routes_data %>%
-  mutate(row = row_number()) %>%
-  mutate(data = pmap(list(data, left, line_of_scrimmage), 
-                     ~ cut_plays(..1) %>%
-                       flip_field_903124(., ..2, ..3)),
-         n = map_dbl(data, nrow)) %>%
-  filter(n >= 2) %>%
-  # left side of field is TRUE
-  mutate(data_same_sideline = purrr::map(data, 
-                                         ~ mutate(., 
-                                                  sof = 160/6 > first(y),
-                                                  y = if_else(sof, 160/3 - y, y),
-                                                  y = y - first(y)
-                                         ) %>%
-                                           dplyr::select(-sof)))  %>%
-  arrange(row)
-
-
-routes_data <-
-  routes_data %>%
-  ungroup() %>%
-  select(-row)
-
-fitted_clusters <-
-  routes_data %>%
-  mutate(curve_num = row_number()) %>%
-  unnest(cols = c(data_same_sideline)) %>%
+nfl_ngs_sample %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
-fitted_clusters
-
-routes_data %>%
+# Overview of the assigned routes
+nfl_ngs_sample %>%
   select(displayName, gameId, playId) %>%
   bind_cols(fitted_clusters %>% select(route_name))
