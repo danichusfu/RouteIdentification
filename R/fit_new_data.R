@@ -14,13 +14,13 @@ fit_new_data <- function(new_trajectory_data, em_results){
 
   new_piks <-
     new_trajectory_data %>%
-    nest(data = c(x, y)) %>%
-    mutate(piks = map(data, ~ new_data_probs(., Alpha, Beta, Sigma)))
+    tidyr::nest(data = c(x, y)) %>%
+    dplyr::mutate(piks = map(data, ~ new_data_probs(., Alpha, Beta, Sigma)))
 
   new_data_fitted <-
     new_piks %>%
-    mutate(cluster_assigned = map_dbl(piks, which.max)) %>%
-    select(-piks)
+    dplyr::mutate(cluster_assigned = map_dbl(piks, which.max)) %>%
+    dplyr::select(-piks)
 
   return(new_data_fitted)
 }
@@ -43,86 +43,86 @@ new_data_probs <- function(routes_data, Alpha, Beta, Sigma){
   # create data for em algorithm
   routes_data <-
     routes_data %>%
-    nest(data = c(x, y)) %>%
-    mutate(curve_i = row_number()) %>%
-    mutate(n_i = map_dbl(data, nrow),
-           t_i = map(n_i, ~ tibble(t = (1:. - 1)/(.-1))),
-           T_i = map(t_i, ~ mutate(., p = list(0:P)) %>%
-                       unnest(cols = c(p)) %>%
-                       mutate(D_p_of_t = choose(P, p) * t^p * (1 - t)^(P - p)) %>%
-                       spread(p, D_p_of_t, sep = "_") %>%
-                       select(-t))) %>%
-    select(data, curve_i, n_i, t_i, T_i) %>%
-    arrange(curve_i) %>%
-    ungroup()
+    tidyr::nest(data = c(x, y)) %>%
+    dplyr::mutate(curve_i = row_number()) %>%
+    dplyr::mutate(n_i = purrr::map_dbl(data, nrow),
+           t_i = purrr::map(n_i, ~ tibble::tibble(t = (1:. - 1)/(.-1))),
+           T_i = purrr::map(t_i, ~ dplyr::mutate(., p = list(0:P)) %>%
+                       tidyr::unnest(cols = c(p)) %>%
+                         dplyr::mutate(D_p_of_t = choose(P, p) * t^p * (1 - t)^(P - p)) %>%
+                       tidyr::spread(p, D_p_of_t, sep = "_") %>%
+                         dplyr::select(-t))) %>%
+    dplyr::select(data, curve_i, n_i, t_i, T_i) %>%
+    dplyr::arrange(curve_i) %>%
+    dplyr::ungroup()
 
 
   # create X matrix
   X <-
     routes_data %>%
-    select(T_i) %>%
-    unnest(c(T_i)) %>%
+    dplyr::select(T_i) %>%
+    tidyr::unnest(c(T_i)) %>%
     Matrix::as.matrix()
 
   # create Y matrix
   Y <-
     routes_data %>%
-    select(data) %>%
-    unnest(cols = c(data)) %>%
-    select(x, y) %>%
+    dplyr::select(data) %>%
+    tidyr::unnest(cols = c(data)) %>%
+    dplyr::select(x, y) %>%
     Matrix::as.matrix()
 
   SEQ <-
     routes_data %>%
-    select(n_i) %>%
-    mutate(n_i = cumsum(n_i)) %>%
+    dplyr::select(n_i) %>%
+    dplyr::mutate(n_i = cumsum(n_i)) %>%
     Matrix::as.matrix()
 
   INDEX <-
     routes_data %>%
-    select(curve_i, t_i) %>%
-    unnest(cols = c(t_i)) %>%
-    select(curve_i)
+    dplyr::select(curve_i, t_i) %>%
+    tidyr::unnest(cols = c(t_i)) %>%
+    dplyr::select(curve_i)
 
   n <- length(SEQ)
   N <- SEQ[n]
-  curve_lengths <- routes_data %>% select(n_i)
+  curve_lengths <- routes_data %>% dplyr::select(n_i)
 
 
   calc_Piik <- function(data, Sigma){
     data %>%
-      transmute(Piik = pmap_dbl(list(x, y, x1, y1), ~ dmvnorm(c(..1, ..2),
+      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ dmvnorm(c(..1, ..2),
                                                               c(..3, ..4),
                                                               Sigma))) %>%
-      bind_cols(as_tibble(INDEX))
+      dplyr::bind_cols(tibble::as_tibble(INDEX))
   }
 
 
   data_Piik <-
-    tibble(Beta, Sigma) %>%
-    mutate(k = row_number()) %>%
-    mutate(X_Beta = map(Beta,
+    dplyr::tibble(Beta, Sigma) %>%
+    dplyr::mutate(k = dplyr::row_number()) %>%
+    dplyr::mutate(X_Beta = purrr::map(Beta,
                         ~ Matrix::as.matrix(X) %*% .x %>%
-                          as_tibble() %>%
-                          bind_cols(as_tibble(Matrix::as.matrix(Y))))) %>%
-    mutate(Piik = map2(X_Beta, Sigma, calc_Piik)) %>%
-    select(k, Piik) %>%
-    unnest(cols = c(Piik))
+                          tibble::as_tibble() %>%
+                          dplyr::bind_cols(tibble::as_tibble(Matrix::as.matrix(Y))))) %>%
+    dplyr::mutate(Piik = purrr::map2(X_Beta, Sigma, calc_Piik)) %>%
+    dplyr::select(k, Piik) %>%
+    tidyr::unnest(cols = c(Piik))
 
   scale_m <-
     data_Piik %>%
-    ungroup() %>%
-    summarise(mean = mean(Piik)) %>%
-    pull(mean)
+    dplyr::ungroup() %>%
+    dplyr::summarise(mean = mean(Piik)) %>%
+    purrr::pull(mean)
 
   Pik <-
     data_Piik %>%
-    mutate(Piik = Piik/scale_m) %>%
-    group_by(curve_i, k) %>%
-    summarise(Pik = prod(Piik))  %>%
-    spread(k, Pik) %>%
-    ungroup() %>%
-    select(-curve_i) %>%
+    dplyr::mutate(Piik = Piik/scale_m) %>%
+    dplyr::group_by(curve_i, k) %>%
+    dplyr::summarise(Pik = prod(Piik))  %>%
+    tidyr::spread(k, Pik) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(-curve_i) %>%
     Matrix::as.matrix()
 
   Pik <- Pik * Alpha
