@@ -47,7 +47,8 @@ new_data_fit %>%
 ## NFL Data example
 
 # Parse NFL data based on file input
-nfl_bdb_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv")
+nfl_bdb_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv",
+                                  data_source = "ngs")
 
 nfl_bdb_sample %>%
   select(curve_num, x, y) %>%
@@ -61,7 +62,8 @@ nfl_bdb_sample %>%
 
 ## Another NFL example: NextGenStats Scraped Data (compliments to @903124S)
 
-nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv")
+nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv",
+                                  data_source = "903124")
 
 nfl_ngs_sample %>%
   select(curve_num, x, y) %>%

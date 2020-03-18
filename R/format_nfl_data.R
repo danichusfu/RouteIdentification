@@ -3,8 +3,22 @@
 #' Read and format data from csv for NFL examples, assuming BDB or 903124 format (NextGenStats)
 #' 
 #' @param file_name Take a file name as it is required input to the csv parser
+#' @param data_source either "ngs" or "903124" can we figure out how to make these the only two options?
 
-format_nfl_data <- function(file_name){
+format_nfl_data <- function(file_name, data_source = "ngs"){
+  
+  
+  # different functions depending on data source
+  # might need error if neither source is present
+  if (data_source == "ngs"){
+    read_routes_from_csv <- read_routes_from_csv
+    flip_field <- flip_field
+  } else{
+    read_routes_from_csv <- read_routes_from_903124
+    flip_field <- flip_field_903124
+  }
+  
+  
   
   # Load all the data
   routes_data <- 
