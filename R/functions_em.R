@@ -167,9 +167,9 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     dplyr::group_by(cluster) %>%
     dplyr::summarise(n = n()) %>%
     dplyr::mutate(prop = n/sum(n)) %>%
-    purrr::pull(prop)
+    dplyr::pull(prop)
 
-  c <- init_clusters %>% purrr::pull(cluster)
+  c <- init_clusters %>% dplyr::pull(cluster)
 
 
   calc_Piik <- function(data, Sigma){
@@ -223,7 +223,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
       data_Piik %>%
       dplyr::ungroup() %>%
       dplyr::summarise(mean = mean(Piik)) %>%
-      purrr::pull(mean)
+      dplyr::pull(mean)
 
     Pik <-
       data_Piik %>%
@@ -298,8 +298,8 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
       #collect() %>%
       dplyr::arrange(k)
 
-    Beta <- param_updates %>% purrr::pull(Beta_new)
-    Sigma <- param_updates %>% purrr::pull(Sigma_new)
+    Beta <- param_updates %>% dplyr::pull(Beta_new)
+    Sigma <- param_updates %>% dplyr::pull(Sigma_new)
 
     #############################################################################
     toc()
@@ -373,7 +373,7 @@ reorder_clusters <- function(em_results){
   # Reorder all of the variables
   row <-
     reordered %>%
-    purrr::pull(row)
+    dplyr::pull(row)
 
   Pik <- Pik[, row]
   colnames(Pik) <- 1:K
@@ -381,15 +381,15 @@ reorder_clusters <- function(em_results){
 
   Beta <-
     reordered %>%
-    purrr::pull(Beta)
+    dplyr::pull(Beta)
 
   Sigma <-
     reordered %>%
-    purrr::pull(Sigma)
+    dplyr::pull(Sigma)
 
   Alpha <-
     reordered %>%
-    purrr::pull(Alpha)
+    dplyr::pull(Alpha)
 
   em_results <-
     list("l_hood" = em_results$l_hood,
