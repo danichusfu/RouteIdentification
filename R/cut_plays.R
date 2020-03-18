@@ -4,6 +4,7 @@
 #'
 #' @param data routes from the tracking data
 #' @return the routes cut up at the appropriate places
+#' @export
 
 cut_plays <- function(data){
   

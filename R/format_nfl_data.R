@@ -4,6 +4,8 @@
 #' 
 #' @param file_name Take a file name as it is required input to the csv parser
 #' @param data_source either "ngs" or "903124" can we figure out how to make these the only two options?
+#' @return A tibble containing the original routes data formatted for use with functions in this package
+#' @export
 
 format_nfl_data <- function(file_name, data_source = "ngs"){
   

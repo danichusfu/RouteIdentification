@@ -7,6 +7,7 @@
 #' @param K number of clusters
 #' @param niter number of iteration to run it for
 #' @return results of the clustering
+#' @export
 
 cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
   
@@ -80,9 +81,9 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     dplyr::group_by(cluster) %>%
     dplyr::summarise(n = n()) %>%
     dplyr::mutate(prop = n/sum(n)) %>%
-    purrr::pull(prop)
+    dplyr::pull(prop)
   
-  c <- init_clusters %>% purrr::pull(cluster)
+  c <- init_clusters %>% dplyr::pull(cluster)
   
   
   calc_Piik <- function(data, Sigma){
@@ -136,7 +137,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
       data_Piik %>%
       dplyr::ungroup() %>%
       dplyr::summarise(mean = mean(Piik)) %>%
-      purrr::pull(mean)
+      dplyr::pull(mean)
     
     Pik <-
       data_Piik %>%
@@ -211,8 +212,8 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
       #collect() %>%
       dplyr::arrange(k)
     
-    Beta <- param_updates %>% purrr::pull(Beta_new)
-    Sigma <- param_updates %>% purrr::pull(Sigma_new)
+    Beta <- param_updates %>% dplyr::pull(Beta_new)
+    Sigma <- param_updates %>% dplyr::pull(Sigma_new)
     
     #############################################################################
     toc()

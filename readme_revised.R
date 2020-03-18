@@ -50,14 +50,15 @@ new_data_fit %>%
 nfl_bdb_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv",
                                   data_source = "ngs")
 
-nfl_bdb_sample %>%
+fitted_clusters <- nfl_bdb_sample %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
 # Overview of the assigned routes
 nfl_bdb_sample %>%
-  select(displayName, gameId, playId) %>%
+  nest(cols = -c(gameId, playId, displayName)) %>%
+  select(gameId, playId, displayName) %>%
   bind_cols(fitted_clusters %>% select(route_name))
 
 ## Another NFL example: NextGenStats Scraped Data (compliments to @903124S)
@@ -65,12 +66,13 @@ nfl_bdb_sample %>%
 nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv",
                                   data_source = "903124")
 
-nfl_ngs_sample %>%
+fitted_clusters <- nfl_ngs_sample %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
 # Overview of the assigned routes
 nfl_ngs_sample %>%
-  select(displayName, gameId, playId) %>%
+  nest(cols = -c(gameId, playId, displayName)) %>%
+  select(gameId, playId, displayName) %>%
   bind_cols(fitted_clusters %>% select(route_name))

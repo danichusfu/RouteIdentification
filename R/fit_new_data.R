@@ -4,7 +4,9 @@
 #'
 #' @param new_trajectory_data the new data to cluster
 #' @param em_results the results of the previous clustering
-#' @return The clusters for the never before seen data
+#' @return The clusters for the new data
+#' @export
+
 fit_new_data <- function(new_trajectory_data, em_results){
   
   Alpha <- em_results$Alpha

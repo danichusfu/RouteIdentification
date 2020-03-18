@@ -7,6 +7,8 @@
 #' @param direction_left the team that is going in the left direction
 #' @param line_of_scrimmage what the line of scrimmage is for tat play
 #' @return return te data that has been flipped about the split line
+#' @export
+
 flip_field <- function(data, team, direction_left, line_of_scrimmage){
   mutate(data,
          # flip the field to try and get all routes in the same direction

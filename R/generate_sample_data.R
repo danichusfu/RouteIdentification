@@ -6,6 +6,8 @@
 #' @param P Degree of the bezier curve
 #' @param number_of_curves the number of curves you want to generate
 #' @return The data describing the randomized curves from the clusters
+#' @export
+
 generate_sample_data <- function(cluster_controls, P = 3, number_of_curves = 120){
   
   

@@ -4,6 +4,7 @@
 #'
 #' @param em_results results of the em algorithm
 #' @return the extract clustered means
+#' @export
 
 extract_cluster_means <- function(em_results){
   Beta <- em_results$Beta
