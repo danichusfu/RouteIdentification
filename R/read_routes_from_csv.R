@@ -4,6 +4,7 @@
 #'
 #' @param file_name name of the tracking data file
 #' @return The routes from the route runner from the tracking file
+#' @export
 
 # create a new reading function
 read_routes_from_csv <- function(file_name){
@@ -33,7 +34,7 @@ read_routes_from_csv <- function(file_name){
     # read all of the data in
     readr::read_csv(file_name, col_types = cols()) %>%
     # drop unnescceary columns
-    dplyr::select(., nflId, gameId, playId, x, y, frame.id, team, event, jerseyNumber) %>%
+    dplyr::select(., nflId, gameId, playId, x, y, frame.id, team, event, jerseyNumber, displayName) %>%
     # keep only the passing plays
     dplyr::inner_join(., pass_playIds, by = c("gameId", "playId"))
   

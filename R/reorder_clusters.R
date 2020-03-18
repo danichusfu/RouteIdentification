@@ -25,7 +25,7 @@ reorder_clusters <- function(em_results){
   # Reorder all of the variables
   row <-
     reordered %>%
-    purrr::pull(row)
+    dplyr::pull(row)
   
   Pik <- Pik[, row]
   colnames(Pik) <- 1:K
@@ -33,15 +33,15 @@ reorder_clusters <- function(em_results){
   
   Beta <-
     reordered %>%
-    purrr::pull(Beta)
+    dplyr::pull(Beta)
   
   Sigma <-
     reordered %>%
-    purrr::pull(Sigma)
+    dplyr::pull(Sigma)
   
   Alpha <-
     reordered %>%
-    purrr::pull(Alpha)
+    dplyr::pull(Alpha)
   
   em_results <-
     list("l_hood" = em_results$l_hood,

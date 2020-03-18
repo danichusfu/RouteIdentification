@@ -4,6 +4,7 @@
 #'
 #' @param file_name name of the tracking data file
 #' @return The routes from the route runner from the tracking file
+#' @export
 
 # create a new reading function
 read_routes_from_903124 <- function(file_name){
@@ -18,11 +19,12 @@ read_routes_from_903124 <- function(file_name){
   
   data <-
     data %>%
-    # Improved so their are no longer duplicates now
+    # Improved so there are no longer duplicates now
     distinct() %>%
     # drop unnescceary columns
     #dplyr::select(., nflId, gameId = game_id, playId = play_id, x, y, event = event_name, position) %>%
-    dplyr::rename(gameId = game_id, playId = play_id, event = event_name) %>%
+    dplyr::rename(gameId = game_id, playId = play_id, event = event_name, displayName = displayName) %>%
+    mutate(team = NA) %>% # temp fix
     # keep only the passing plays
     group_by(gameId, playId) %>%
     mutate(pass_play = sum(event %in% "pass_forward") >= 1,
@@ -41,7 +43,7 @@ read_routes_from_903124 <- function(file_name){
     mutate(time = c("ball_snap", "end_play")) %>%
     pivot_wider(names_from = time, values_from = mean_team) %>%
     mutate(left = end_play < ball_snap) %>%
-    select(gameId, playId, left)
+    select(gameId, playId, direction_left = left)
   
   line_of_scrimmage <-
     data %>%
@@ -58,9 +60,8 @@ read_routes_from_903124 <- function(file_name){
     nest(data = c(x, y, time, event)) %>%
     left_join(play_direction, by = c("gameId", "playId")) %>%
     left_join(line_of_scrimmage, by = c("gameId", "playId")) %>%
-    mutate(line_of_scrimmage = if_else(left, left_scrim, right_scrim)) %>%
+    mutate(line_of_scrimmage = if_else(direction_left, left_scrim, right_scrim)) %>%
     dplyr::select(-right_scrim, -left_scrim)
-  
   
   return(data)
 }

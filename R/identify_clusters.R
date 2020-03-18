@@ -4,7 +4,8 @@
 #' 
 #' @param nest_traj Tibble containing the nested trajectory data with at least columns x, y
 #' @param em_results The output of driver_em_nested()
-#' 
+#' @return tibble containing the original input and the assigned clusters from the EM algorithm
+#' @export
 
 identify_clusters <- function(nest_traj, em_results){
   

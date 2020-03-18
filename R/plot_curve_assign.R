@@ -3,6 +3,8 @@
 #' Generate a facet wrapped ggplot2 object of the curves and their matched cluster mean
 #' 
 #' @param nest_traj_with_em The output of identify_clusters, contains the raw tracking data and curve assignments
+#' @return ggplot2 object of the curves and their matched cluster mean
+#' @export
 
 plot_curve_assign <- function(nest_traj_with_em){
   
