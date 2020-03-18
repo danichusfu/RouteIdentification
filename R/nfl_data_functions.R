@@ -22,7 +22,6 @@ read_routes_from_csv <- function(file_name){
   player_pos_id_key <-
     players %>% dplyr::select(nflId, PositionAbbr)
 
-  # subset that group to only grab the ones who "run routes often?
   route_runners_pos_id_key <-
     player_pos_id_key %>%
     dplyr::filter(PositionAbbr %in% c("WR", "TE", "RB", "FB"))

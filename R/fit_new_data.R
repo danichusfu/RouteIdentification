@@ -113,7 +113,7 @@ new_data_probs <- function(routes_data, Alpha, Beta, Sigma){
     data_Piik %>%
     dplyr::ungroup() %>%
     dplyr::summarise(mean = mean(Piik)) %>%
-    purrr::pull(mean)
+    dplyr::pull(mean)
 
   Pik <-
     data_Piik %>%
