@@ -3,6 +3,7 @@
 #' cut plays to only get the route information we care about
 #'
 #' @param data routes from the tracking data
+#' @importFrom magrittr %>% 
 #' @return the routes cut up at the appropriate places
 #' @export
 

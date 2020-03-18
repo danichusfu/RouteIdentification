@@ -3,6 +3,7 @@
 #' reorder clusters so that the biggest ones are numbered 1 and smallest n
 #'
 #' @param em_results results of em
+#' @importFrom magrittr %>%
 #' @return reordered em_results
 
 reorder_clusters <- function(em_results){

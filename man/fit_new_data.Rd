@@ -12,11 +12,7 @@ fit_new_data(new_trajectory_data, em_results)
 \item{em_results}{the results of the previous clustering}
 }
 \value{
-<<<<<<< HEAD
-The clusters for the never before seen data
-=======
 The clusters for the new data
->>>>>>> 6ec88e675312e585c05fccf8b2fabc96d07d6261
 }
 \description{
 Assign clusters to never before seen data

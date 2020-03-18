@@ -4,6 +4,7 @@
 #'
 #' @param new_trajectory_data the new data to cluster
 #' @param em_results the results of the previous clustering
+#' @importFrom magrittr %>%
 #' @return The clusters for the new data
 #' @export
 

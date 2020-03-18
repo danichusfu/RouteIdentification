@@ -4,6 +4,7 @@
 #' 
 #' @param nest_traj Tibble containing the nested trajectory data with at least columns x, y
 #' @param K Number of clusters to identify via the Expectation Maximization Algorithm
+#' @importFrom magrittr %>%
 #' @return Tibble containing results of the EM algorithm
 #' @export
 

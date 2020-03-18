@@ -16,6 +16,7 @@
 #' @importFrom Matrix t as.matrix Diagonal
 #' @importFrom utils data 
 #' @importFrom stats kmeans
+#' @importFrom magrittr %>%
 #' @export
 
 filler_fn <- function(){

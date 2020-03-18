@@ -4,6 +4,7 @@
 #' 
 #' @param nest_traj_with_em The output of identify_clusters, contains the raw tracking data and curve assignments
 #' @return ggplot2 object of the curves and their matched cluster mean
+#' @importFrom magrittr %>%
 #' @export
 
 plot_curve_assign <- function(nest_traj_with_em){

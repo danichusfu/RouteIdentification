@@ -5,6 +5,7 @@
 #' @param Alpha The alpha from the emclustering
 #' @param Beta the beta from the em clustering
 #' @param Sigma  the sigma from the em clustering
+#' @importFrom magrittr %>%
 #' @return probabilities for each new cluster
 
 new_data_probs <- function(routes_data, Alpha, Beta, Sigma){

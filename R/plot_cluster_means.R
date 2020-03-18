@@ -3,6 +3,7 @@
 #' plot cluster means given the results of the em
 #'
 #' @param em_results results of the em algorithm
+#' @importFrom magrittr %>%
 #' @return plot of the cluster means
 
 plot_cluster_means <- function(em_results){

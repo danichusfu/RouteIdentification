@@ -5,6 +5,7 @@
 #' @param cluster_controls cluster controls for the random curves
 #' @param P Degree of the bezier curve
 #' @param number_of_curves the number of curves you want to generate
+#' @importFrom magrittr %>%
 #' @return The data describing the randomized curves from the clusters
 #' @export
 

@@ -42,215 +42,72 @@ This is a basic example which shows you how to solve a common problem:
 # devtools::install_github(repo = "danichusfu/RouteIdentification")
 
 library(RouteIdentification)
-#> Loading required package: ggplot2
-#> Loading required package: purrr
-#> Loading required package: tibble
-#> Loading required package: dplyr
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
-#> Loading required package: tidyr
-#> Loading required package: stringr
-#> Loading required package: readr
-#> Loading required package: forcats
-#> Loading required package: magrittr
-#> 
-#> Attaching package: 'magrittr'
-#> The following object is masked from 'package:tidyr':
-#> 
-#>     extract
-#> The following object is masked from 'package:purrr':
-#> 
-#>     set_names
-#> Loading required package: tictoc
-#> Loading required package: emdbook
-#> Loading required package: bezier
-#> Warning: replacing previous import 'tidyr::extract' by 'magrittr::extract' when
-#> loading 'RouteIdentification'
-#> Warning: replacing previous import 'purrr::set_names' by 'magrittr::set_names'
+#> Warning: replacing previous import 'magrittr::set_names' by 'purrr::set_names'
 #> when loading 'RouteIdentification'
-library(readr)
+#> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
+#> loading 'RouteIdentification'
+library(tidyverse)
+#> -- Attaching packages -------------------------------------------------------------------------- tidyverse 1.3.0 --
+#> v ggplot2 3.2.1     v purrr   0.3.3
+#> v tibble  2.1.3     v dplyr   0.8.4
+#> v tidyr   1.0.2     v stringr 1.4.0
+#> v readr   1.3.1     v forcats 0.4.0
+#> -- Conflicts ----------------------------------------------------------------------------- tidyverse_conflicts() --
+#> x dplyr::filter() masks stats::filter()
+#> x dplyr::lag()    masks stats::lag()
 
-cluster_controls <- generate_random_cluster_controls(number_of_clusters = 3)
+# Generate data
+nested_trajectory_data <- rand_centred_curves(n_clust = 3, n_curves = 20)
 
-nested_trajectory_data <-
-  generate_sample_data(cluster_controls, number_of_curves = 20) %>%
-  select(curve_i, x, y, cluster = cluster_num)
-
-
-em_results <-
-  nested_trajectory_data %>%
-  unnest(cols = c(x, y)) %>%
-  cluster_trajectory_data(K = 3)
+# Apply EM algorithm, either to generated data or appropriately formatted data
+em_results <- driver_em_nested(nested_trajectory_data, K = 3)
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 1.96 sec elapsed
+#> 0.66 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.14 sec elapsed
+#> 0.06 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 1.93 sec elapsed
-#> [1] 1254.84
+#> 0.61 sec elapsed
+#> [1] 3422.616
 #> [1] "m_step time"
-#> 0.09 sec elapsed
+#> 0.03 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 1.66 sec elapsed
-#> [1] 1255.595
-#> [1] "m_step time"
-#> 0.07 sec elapsed
-#> [1] 4
-#> [1] "e_step time"
-#> 1.88 sec elapsed
-#> [1] 1255.937
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 5
-#> [1] "e_step time"
-#> 1.86 sec elapsed
-#> [1] 1256.171
-#> [1] "m_step time"
-#> 0.03 sec elapsed
-#> [1] 6
-#> [1] "e_step time"
-#> 1.62 sec elapsed
-#> [1] 1256.824
-#> [1] "m_step time"
-#> 0.1 sec elapsed
-#> [1] 7
-#> [1] "e_step time"
-#> 1.89 sec elapsed
-#> [1] 1258.31
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 8
-#> [1] "e_step time"
-#> 1.9 sec elapsed
-#> [1] 1259.031
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 9
-#> [1] "e_step time"
-#> 1.94 sec elapsed
-#> [1] 1259.482
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 10
-#> [1] "e_step time"
-#> 1.86 sec elapsed
-#> [1] 1259.832
-#> [1] "m_step time"
-#> 0.07 sec elapsed
-#> [1] 11
-#> [1] "e_step time"
-#> 1.44 sec elapsed
-#> [1] 1260.664
-#> [1] "m_step time"
-#> 0.03 sec elapsed
-#> [1] 12
-#> [1] "e_step time"
-#> 0.92 sec elapsed
-#> [1] 1262.393
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 13
-#> [1] "e_step time"
-#> 0.97 sec elapsed
-#> [1] 1263.528
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 14
-#> [1] "e_step time"
-#> 0.97 sec elapsed
-#> [1] 1263.74
-#> [1] "m_step time"
-#> 0.04 sec elapsed
-#> [1] 15
-#> [1] "e_step time"
-#> 0.83 sec elapsed
-#> [1] 1263.775
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 16
-#> [1] "e_step time"
-#> 1.04 sec elapsed
-#> [1] 1263.781
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 17
-#> [1] "e_step time"
-#> 1.2 sec elapsed
-#> [1] 1263.783
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 18
-#> [1] "e_step time"
-#> 1.3 sec elapsed
-#> [1] 1263.783
-#> [1] "m_step time"
-#> 0.09 sec elapsed
-#> [1] 19
-#> [1] "e_step time"
-#> 1.22 sec elapsed
-#> [1] 1263.783
-#> [1] "m_step time"
-#> 0.03 sec elapsed
-#> [1] 20
-#> [1] "e_step time"
-#> 0.99 sec elapsed
-#> [1] 1263.783
-#> [1] "m_step time"
-#> 0.04 sec elapsed
-#> 30.68 sec elapsed
+#> 0.64 sec elapsed
+#> 2 sec elapsed
 
+# Grab the cluster means
+cluster_means <- extract_cluster_means(em_results)
 
-cluster_means <-
-  extract_cluster_means(em_results)
+# Identify cluster assignments
+cluster_assignments <- identify_clusters(nested_trajectory_data, em_results)
 
-nested_trajectory_data %>%
-  bind_cols(as_tibble(em_results$Pik)) %>%
-  mutate(curve_i = row_number()) %>%
-  pivot_longer(names_to = "pred_cluster", values_to = "prob", matches("\\d")) %>%
-  mutate(pred_cluster = parse_number(pred_cluster)) %>%
-  group_by(curve_i) %>%
-  filter(prob == max(prob)) %>%
-  ungroup() %>%
+# Count cluster assignments
+cluster_assignments %>%
   count(cluster, pred_cluster)
-#> # A tibble: 4 x 3
+#> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            1     6
-#> 2       2            2     6
-#> 3       2            3     6
-#> 4       3            1     2
+#> 1       1            3     6
+#> 2       2            1     7
+#> 3       3            2     7
 
-nested_trajectory_data %>%
-  bind_cols(as_tibble(em_results$Pik)) %>%
-  mutate(curve_i = row_number()) %>%
-  pivot_longer(names_to = "pred_cluster", values_to = "prob", matches("\\d")) %>%
-  mutate(pred_cluster = parse_number(pred_cluster)) %>%
-  group_by(curve_i) %>%
-  filter(prob == max(prob)) %>%
-  unnest(cols = c(x, y)) %>%
-ggplot(aes(x = x, y = y, group = curve_i, colour = factor(cluster))) +
-  geom_path() +
-  facet_wrap(~ pred_cluster)
+# Plot clusters assigments by assigned cluster mean
+cluster_assignments %>%
+  plot_curve_assign()
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 ``` r
 
-
-ggplot(cluster_means, aes(x = V1, y = V2, colour = factor(cluster))) +
-  geom_path()+
+# Simple plot of just the cluster means, no other curves
+cluster_means %>%
+  ggplot(aes(x = V1, y = V2, colour = factor(cluster))) +
+  geom_path() +
   facet_wrap(~ cluster)
 ```
 
@@ -258,44 +115,25 @@ ggplot(cluster_means, aes(x = V1, y = V2, colour = factor(cluster))) +
 
 ``` r
 
+# Generate new data from the globally assigned cluster_controls, generated in rand_centred_curves()
 new_nested_trajectory_data <-
   generate_sample_data(cluster_controls) %>%
   select(curve_i, x, y, cluster = cluster_num)
 
-
 new_trajectory_data <- new_nested_trajectory_data %>% unnest(cols = c(x, y))
 
+# Fit the new data to the Expectation Maximization results (naming to be updated)
 new_data_fit <- fit_new_data(new_trajectory_data, em_results)
 
+# Tabulate assignments
 new_data_fit %>%
   count(cluster, cluster_assigned)
-#> # A tibble: 4 x 3
+#> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                1    40
-#> 2       2                2    26
-#> 3       2                3    17
-#> 4       3                1    37
-```
-
-``` r
-# replace this with actual nfl route that has been transformed properly. Its incoming
-fit_new_data(new_trajectory_data, nfl_em_results) %>%
-  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
-#> # A tibble: 120 x 5
-#>    curve_i cluster data              cluster_assigned route_name
-#>      <int>   <dbl> <list>                       <dbl> <chr>     
-#>  1       1       3 <tibble [46 x 2]>                9 comeback  
-#>  2       2       1 <tibble [42 x 2]>               29 deep_out  
-#>  3       3       2 <tibble [42 x 2]>               26 deep_out  
-#>  4       4       1 <tibble [40 x 2]>               29 deep_out  
-#>  5       5       3 <tibble [39 x 2]>                9 comeback  
-#>  6       6       1 <tibble [40 x 2]>               29 deep_out  
-#>  7       7       3 <tibble [44 x 2]>                9 comeback  
-#>  8       8       2 <tibble [37 x 2]>               26 deep_out  
-#>  9       9       2 <tibble [43 x 2]>               26 deep_out  
-#> 10      10       2 <tibble [47 x 2]>               26 deep_out  
-#> # ... with 110 more rows
+#> 1       1                3    48
+#> 2       2                1    47
+#> 3       3                2    25
 ```
 
 ## Now with NFL sample data
@@ -306,146 +144,67 @@ fit_new_data(new_trajectory_data, nfl_em_results) %>%
 # list all the files
 #tracking_files <- list.files(path = "Data/", pattern = "tracking_.*\\.csv")
 
-# Load all the data
-routes_data <- 
-  # create the tibble with the file names
-  tibble(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv") %>%
-  # read the data in nested
-  mutate(data = map(file_name, read_routes_from_csv)) %>%
-  dplyr::select(-file_name) %>% 
-  unnest(cols = c(data))
+# Parse NFL data based on file input
+nfl_bdb_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/nfl-football-ops/Big-Data-Bowl/master/Data/tracking_gameId_2017090700.csv",
+                                  data_source = "ngs")
 
-# transform our curves
-routes_data <-
-  routes_data %>%
-  mutate(row = row_number()) %>%
-  mutate(data = pmap(list(data, team, direction_left, line_of_scrimmage), 
-                     ~ cut_plays(..1) %>%
-                       flip_field(., ..2, ..3, ..4)),
-         n = map_dbl(data, nrow)) %>%
-  filter(n >= 2) %>%
-  # left side of field is TRUE
-  mutate(data_same_sideline = purrr::map(data, 
-                                         ~ mutate(., 
-                                                  sof = 160/6 > first(y),
-                                                  y = if_else(sof, 160/3 - y, y),
-                                                  y = y - first(y)
-                                         ) %>%
-                                           dplyr::select(-sof)))  %>%
-  arrange(row)
-
-
-routes_data <-
-  routes_data %>%
-  ungroup() %>%
-  select(-row)
-
-
-routes_data %>%
-  mutate(curve_num = row_number()) %>%
-  unnest(cols = c(data_same_sideline)) %>%
+fitted_clusters <- nfl_bdb_sample %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+
+# Overview of the assigned routes
+nfl_bdb_sample %>%
+  nest(cols = -c(gameId, playId, displayName)) %>%
+  select(gameId, playId, displayName) %>%
+  bind_cols(fitted_clusters %>% select(route_name))
 #> # A tibble: 394 x 4
-#>    curve_num data              cluster_assigned route_name
-#>        <int> <list>                       <dbl> <chr>     
-#>  1         1 <tibble [63 x 2]>               30 dig/over  
-#>  2         2 <tibble [63 x 2]>                5 go/seam   
-#>  3         3 <tibble [63 x 2]>               27 corner    
-#>  4         4 <tibble [63 x 2]>               11 flat      
-#>  5         5 <tibble [63 x 2]>                5 go/seam   
-#>  6         6 <tibble [45 x 2]>               27 corner    
-#>  7         7 <tibble [45 x 2]>                4 flat      
-#>  8         8 <tibble [45 x 2]>                2 dig/over  
-#>  9         9 <tibble [45 x 2]>               18 flat      
-#> 10        10 <tibble [45 x 2]>               29 deep_out  
+#>        gameId playId displayName    route_name
+#>         <dbl>  <dbl> <chr>          <chr>     
+#>  1 2017090700     68 Rob Gronkowski dig/over  
+#>  2 2017090700     68 Chris Hogan    go/seam   
+#>  3 2017090700     68 Dwayne Allen   corner    
+#>  4 2017090700     68 Rex Burkhead   flat      
+#>  5 2017090700     68 Brandin Cooks  go/seam   
+#>  6 2017090700     94 Danny Amendola corner    
+#>  7 2017090700     94 Rob Gronkowski flat      
+#>  8 2017090700     94 Chris Hogan    dig/over  
+#>  9 2017090700     94 Rex Burkhead   flat      
+#> 10 2017090700     94 Brandin Cooks  deep_out  
 #> # ... with 384 more rows
 ```
 
 ## Now with the higlight data from 903124
 
 ``` r
-# Use online sample data from big data bowl
+## Another NFL example: NextGenStats Scraped Data (compliments to @903124S)
 
-# list all the files
-#tracking_files <- list.files(path = "Data/", pattern = "tracking_.*\\.csv")
-
-# Load all the data
-routes_data <- 
-  # create the tibble with the file names
-  tibble(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv") %>%
-  # read the data in nested
-  mutate(data = map(file_name, read_routes_from_903124)) %>%
-  dplyr::select(-file_name) %>% 
-  unnest(cols = c(data))
+nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/danichusfu/NFL_Highlight_Tracking/master/Highlight_19_post.csv",
+                                  data_source = "903124")
 #> Warning: Missing column names filled in: 'X1' [1]
 
-# transform our curves
-routes_data <-
-  routes_data %>%
-  mutate(row = row_number()) %>%
-  mutate(data = pmap(list(data, left, line_of_scrimmage), 
-                     ~ cut_plays(..1) %>%
-                       flip_field_903124(., ..2, ..3)),
-         n = map_dbl(data, nrow)) %>%
-  filter(n >= 2) %>%
-  # left side of field is TRUE
-  mutate(data_same_sideline = purrr::map(data, 
-                                         ~ mutate(., 
-                                                  sof = 160/6 > first(y),
-                                                  y = if_else(sof, 160/3 - y, y),
-                                                  y = y - first(y)
-                                         ) %>%
-                                           dplyr::select(-sof)))  %>%
-  arrange(row)
-
-
-routes_data <-
-  routes_data %>%
-  ungroup() %>%
-  select(-row)
-
-
-fitted_clusters <-
-  routes_data %>%
-  mutate(curve_num = row_number()) %>%
-  unnest(cols = c(data_same_sideline)) %>%
+fitted_clusters <- nfl_ngs_sample %>%
   select(curve_num, x, y) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
-fitted_clusters
-#> # A tibble: 124 x 4
-#>    curve_num data              cluster_assigned route_name
-#>        <int> <list>                       <dbl> <chr>     
-#>  1         1 <tibble [59 x 2]>               28 blocking  
-#>  2         2 <tibble [59 x 2]>               11 flat      
-#>  3         3 <tibble [59 x 2]>               20 post      
-#>  4         4 <tibble [59 x 2]>               10 flat      
-#>  5         5 <tibble [59 x 2]>                5 go/seam   
-#>  6         6 <tibble [57 x 2]>               25 corner    
-#>  7         7 <tibble [57 x 2]>               12 dig/over  
-#>  8         8 <tibble [57 x 2]>               28 blocking  
-#>  9         9 <tibble [57 x 2]>               19 blocking  
-#> 10        10 <tibble [57 x 2]>                4 flat      
-#> # ... with 114 more rows
-
-routes_data %>%
-  select(displayName, gameId, playId) %>%
+# Overview of the assigned routes
+nfl_ngs_sample %>%
+  nest(cols = -c(gameId, playId, displayName)) %>%
+  select(gameId, playId, displayName) %>%
   bind_cols(fitted_clusters %>% select(route_name))
 #> # A tibble: 124 x 4
-#>    displayName         gameId playId route_name
-#>    <chr>                <dbl>  <dbl> <chr>     
-#>  1 Luke Willson    2020010501   2688 blocking  
-#>  2 Tyler Lockett   2020010501   2688 flat      
-#>  3 David Moore     2020010501   2688 post      
-#>  4 Travis Homer    2020010501   2688 flat      
-#>  5 D.K. Metcalf    2020010501   2688 go/seam   
-#>  6 DeAndre Hopkins 2020010400   3187 corner    
-#>  7 Kenny Stills    2020010400   3187 dig/over  
-#>  8 Darren Fells    2020010400   3187 blocking  
-#>  9 Carlos Hyde     2020010400   3187 blocking  
-#> 10 DeAndre Carter  2020010400   3187 flat      
+#>        gameId playId displayName     route_name
+#>         <dbl>  <dbl> <chr>           <chr>     
+#>  1 2020010501   2688 Luke Willson    blocking  
+#>  2 2020010501   2688 Tyler Lockett   flat      
+#>  3 2020010501   2688 David Moore     post      
+#>  4 2020010501   2688 Travis Homer    flat      
+#>  5 2020010501   2688 D.K. Metcalf    go/seam   
+#>  6 2020010400   3187 DeAndre Hopkins corner    
+#>  7 2020010400   3187 Kenny Stills    dig/over  
+#>  8 2020010400   3187 Darren Fells    blocking  
+#>  9 2020010400   3187 Carlos Hyde     blocking  
+#> 10 2020010400   3187 DeAndre Carter  flat      
 #> # ... with 114 more rows
 ```

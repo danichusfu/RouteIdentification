@@ -6,6 +6,7 @@
 #' @param P degree of bezier curve
 #' @param K number of clusters
 #' @param niter number of iteration to run it for
+#' @importFrom magrittr %>%
 #' @return results of the clustering
 #' @export
 

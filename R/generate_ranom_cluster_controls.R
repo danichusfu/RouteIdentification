@@ -4,6 +4,7 @@
 #'
 #' @param number_of_clusters number of template curves
 #' @param P Degree of the bezier curve
+#' @importFrom magrittr %>%
 #' @return The randomized cluster controls
 generate_random_cluster_controls <- function(number_of_clusters = 5, P = 3){
   cluster_controls <-

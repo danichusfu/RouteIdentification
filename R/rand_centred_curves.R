@@ -5,6 +5,7 @@
 #' @param n_clust the number of clusters to define randomly
 #' @param n_curves the number of curves to define about the clusters randomly
 #' @return Tibble containing randomly generated data about the provided number of cluster means
+#' @importFrom magrittr %>%
 #' @export
 
 rand_centred_curves <- function(n_clust, n_curves){

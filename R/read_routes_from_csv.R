@@ -4,6 +4,7 @@
 #'
 #' @param file_name name of the tracking data file
 #' @return The routes from the route runner from the tracking file
+#' @importFrom magrittr %>%
 #' @export
 
 # create a new reading function

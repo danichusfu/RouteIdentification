@@ -4,6 +4,7 @@
 #' 
 #' @param file_name Take a file name as it is required input to the csv parser
 #' @param data_source either "ngs" or "903124" can we figure out how to make these the only two options?
+#' @importFrom magrittr %>%
 #' @return A tibble containing the original routes data formatted for use with functions in this package
 #' @export
 
@@ -27,7 +28,7 @@ format_nfl_data <- function(file_name, data_source = "ngs"){
     # create the tibble with the file names
     tibble::tibble(file_name = file_name) %>%
     # read the data in nested
-    dplyr::mutate(data = ourrr::map(file_name, read_routes_from_csv)) %>%
+    dplyr::mutate(data = purrr::map(file_name, read_routes_from_csv)) %>%
     dplyr::select(-file_name) %>% 
     tidyr::unnest(cols = c(data))
   

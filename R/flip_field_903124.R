@@ -6,6 +6,7 @@
 #' @param team placeholder for now, need to adjust functionality with that of flip_field.R
 #' @param left the team the player plays on
 #' @param line_of_scrimmage what the line of scrimmage is for tat play
+#' @importFrom magrittr %>%
 #' @return return te data that has been flipped about the split line
 #' @export
 
