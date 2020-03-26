@@ -11,7 +11,7 @@ The goal of RouteIdentification is to clustery trajectory data sets like
 those found in sports analytics tracking data. This work was developed
 as part of the first Big Data Bowl and the methodology is written about
 in
-[JQAS](https://www.degruyter.com/view/j/jqas.ahead-of-print/jqas-2019-0047/jqas-2019-0047.xml?format=INT)
+[JQAS](https://www.degruyter.com/view/journals/jqas/ahead-of-print/article-10.1515-jqas-2019-0047/article-10.1515-jqas-2019-0047.xml). You may alse find the article on [arXiv](https://arxiv.org/abs/1908.02423).
 
 ## Installation
 
