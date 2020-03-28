@@ -159,9 +159,10 @@ vehicle_data %>%
   facet_wrap(~ cluster)
 
 # select a subset of clusters
-vehicle_data_subset = vehicle_data %>% 
-  filter(label %in% c(1,3,4)) %>% 
-  dplyr::select(-full_data, cluster = label )
+vehicle_data_subset <- 
+  vehicle_data %>% 
+  filter(label %in% c(1, 3, 4)) %>% 
+  dplyr::select(-full_data, cluster = label)
 
 em_results <- driver_em_nested(vehicle_data_subset, K = 3)
 
