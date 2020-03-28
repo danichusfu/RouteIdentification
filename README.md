@@ -47,12 +47,12 @@ library(RouteIdentification)
 #> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
 #> loading 'RouteIdentification'
 library(tidyverse)
-#> -- Attaching packages -------------------------------------------------------------------------- tidyverse 1.3.0 --
+#> -- Attaching packages ------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
 #> v ggplot2 3.2.1     v purrr   0.3.3
 #> v tibble  2.1.3     v dplyr   0.8.4
 #> v tidyr   1.0.2     v stringr 1.4.0
 #> v readr   1.3.1     v forcats 0.4.0
-#> -- Conflicts ----------------------------------------------------------------------------- tidyverse_conflicts() --
+#> -- Conflicts ---------------------------------------------------------------------------------------------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
 
@@ -61,23 +61,23 @@ nested_trajectory_data <- rand_centred_curves(n_clust = 3, n_curves = 20)
 
 # Apply EM algorithm, either to generated data or appropriately formatted data
 em_results <- driver_em_nested(nested_trajectory_data, K = 3)
-#> 0 sec elapsed
+#> 0.01 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 0.66 sec elapsed
+#> 1.2 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.06 sec elapsed
+#> 0.1 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 0.61 sec elapsed
-#> [1] 3422.616
+#> 1.17 sec elapsed
+#> [1] 3412.226
 #> [1] "m_step time"
-#> 0.03 sec elapsed
+#> 0.05 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 0.64 sec elapsed
-#> 2 sec elapsed
+#> 1.17 sec elapsed
+#> 3.69 sec elapsed
 
 # Grab the cluster means
 cluster_means <- extract_cluster_means(em_results)
@@ -91,9 +91,9 @@ cluster_assignments %>%
 #> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            3     6
-#> 2       2            1     7
-#> 3       3            2     7
+#> 1       1            1     9
+#> 2       2            3     3
+#> 3       3            2     8
 
 # Plot clusters assigments by assigned cluster mean
 cluster_assignments %>%
@@ -131,9 +131,9 @@ new_data_fit %>%
 #> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                3    48
-#> 2       2                1    47
-#> 3       3                2    25
+#> 1       1                1    47
+#> 2       2                3    40
+#> 3       3                2    33
 ```
 
 ## Now with NFL sample data
@@ -208,3 +208,75 @@ nfl_ngs_sample %>%
 #> 10 2020010400   3187 DeAndre Carter  flat      
 #> # ... with 114 more rows
 ```
+
+## Another example: vehicle trajectory clustering
+
+  - Data source:
+    <http://cvrr.ucsd.edu/bmorris/datasets/dataset_trajectory_clustering.html>
+  - CROSS: Simulated four way traffic intersection with various through
+    and turn patterns present. Units are pixels.
+  - 19 trajectory clusters
+
+<!-- end list -->
+
+``` r
+vehicle_data = readRDS("data/vehicle_traj.rds")
+
+# visualize all 19 clusters 
+vehicle_data %>% 
+  dplyr::select(full_data, cluster = label) %>% 
+  unnest(c(full_data)) %>% 
+  ggplot(aes(x = x, y = y, group = curve_i)) + 
+  geom_path(alpha=0.2) + 
+  coord_fixed() +
+  facet_wrap(~ cluster)
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+``` r
+
+# select a subset of clusters
+vehicle_data_subset <- 
+  vehicle_data %>% 
+  filter(label %in% c(1, 3, 4)) %>% 
+  dplyr::select(-full_data, cluster = label)
+
+em_results <- driver_em_nested(vehicle_data_subset, K = 3)
+#> 0 sec elapsed
+#> [1] 1
+#> [1] "e_step time"
+#> 4.14 sec elapsed
+#> [1] -Inf
+#> [1] "m_step time"
+#> 0.04 sec elapsed
+#> [1] 2
+#> [1] "e_step time"
+#> 4.21 sec elapsed
+#> [1] -23709.81
+#> [1] "m_step time"
+#> 0.04 sec elapsed
+#> [1] 3
+#> [1] "e_step time"
+#> 4.1 sec elapsed
+#> 12.53 sec elapsed
+
+# Identify cluster assignments
+cluster_assignments <- identify_clusters(vehicle_data_subset, em_results)
+
+# Count cluster assignments
+cluster_assignments %>%
+  count(cluster, pred_cluster)
+#> # A tibble: 3 x 3
+#>   cluster pred_cluster     n
+#>     <dbl>        <dbl> <int>
+#> 1       1            2   100
+#> 2       3            1   100
+#> 3       4            3   100
+
+# Plot clusters assigments by assigned cluster mean
+cluster_assignments %>%
+  plot_curve_assign()
+```
+
+<img src="man/figures/README-unnamed-chunk-5-2.png" width="100%" />
