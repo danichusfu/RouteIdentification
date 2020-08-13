@@ -65,7 +65,7 @@ new_data_probs <- function(routes_data, Alpha, Beta, Sigma){
   
   calc_Piik <- function(data, Sigma){
     data %>%
-      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ dmvnorm(c(..1, ..2),
+      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ emdbook::dmvnorm(c(..1, ..2),
                                                                      c(..3, ..4),
                                                                      Sigma))) %>%
       dplyr::bind_cols(tibble::as_tibble(INDEX))
@@ -78,7 +78,7 @@ new_data_probs <- function(routes_data, Alpha, Beta, Sigma){
     dplyr::mutate(X_Beta = purrr::map(Beta,
                                       ~ Matrix::as.matrix(X) %*% .x %>%
                                         tibble::as_tibble() %>%
-                                        dplyr::bind_cols(tibble::as_tibble(Matrix::as.matrix(Y))))) %>%
+                                        dplyr::bind_cols(rename(tibble::as_tibble(Matrix::as.matrix(Y)), x1 = x, y1 = y)))) %>%
     dplyr::mutate(Piik = purrr::map2(X_Beta, Sigma, calc_Piik)) %>%
     dplyr::select(k, Piik) %>%
     tidyr::unnest(cols = c(Piik))

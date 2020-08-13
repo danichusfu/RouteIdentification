@@ -16,8 +16,11 @@ format_nfl_data <- function(file_name, data_source = "ngs"){
   if (data_source == "ngs"){
     read_routes_from_csv <- read_routes_from_csv
     flip_field <- flip_field
-  } else{
+  } else if(data_source == "903124"){
     read_routes_from_csv <- read_routes_from_903124
+    flip_field <- flip_field_903124
+  } else{
+    read_routes_from_csv <- read_routes_from_asonty
     flip_field <- flip_field_903124
   }
   
@@ -58,7 +61,8 @@ format_nfl_data <- function(file_name, data_source = "ngs"){
     dplyr::select(-row)
   
   # nfl_em_results and cluster_route_map are objects that exist within this package and can be called freely
-  routes_data <- routes_data %>%
+  routes_data <- 
+    routes_data %>%
     dplyr::mutate(curve_num = dplyr::row_number()) %>%
     tidyr::unnest(cols = c(data_same_sideline)) 
   
