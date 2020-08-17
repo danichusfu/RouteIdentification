@@ -11,7 +11,7 @@ The goal of RouteIdentification is to clustery trajectory data sets like
 those found in sports analytics tracking data. This work was developed
 as part of the first Big Data Bowl and the methodology is written about
 in
-[JQAS](https://www.degruyter.com/view/journals/jqas/ahead-of-print/article-10.1515-jqas-2019-0047/article-10.1515-jqas-2019-0047.xml). You may alse find the article on [arXiv](https://arxiv.org/abs/1908.02423).
+[JQAS](https://www.degruyter.com/view/j/jqas.ahead-of-print/jqas-2019-0047/jqas-2019-0047.xml?format=INT)
 
 ## Installation
 
@@ -47,7 +47,7 @@ library(RouteIdentification)
 #> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
 #> loading 'RouteIdentification'
 library(tidyverse)
-#> -- Attaching packages -------------------------------------------------------- tidyverse 1.3.0 --
+#> -- Attaching packages ----- tidyverse 1.3.0 --
 #> v ggplot2 3.3.0     v purrr   0.3.4
 #> v tibble  3.0.1     v dplyr   1.0.0
 #> v tidyr   1.1.0     v stringr 1.4.0
@@ -56,7 +56,7 @@ library(tidyverse)
 #> Warning: package 'tibble' was built under R version 3.6.3
 #> Warning: package 'purrr' was built under R version 3.6.3
 #> Warning: package 'dplyr' was built under R version 3.6.3
-#> -- Conflicts ----------------------------------------------------------- tidyverse_conflicts() --
+#> -- Conflicts -------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
 
@@ -68,86 +68,20 @@ em_results <- driver_em_nested(nested_trajectory_data, K = 3)
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 0.9 sec elapsed
+#> 0.43 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.13 sec elapsed
+#> 0.05 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 0.94 sec elapsed
-#> [1] 1392.234
+#> 0.44 sec elapsed
+#> [1] 3391.293
 #> [1] "m_step time"
 #> 0.04 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 0.89 sec elapsed
-#> [1] 1397.012
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 4
-#> [1] "e_step time"
-#> 0.85 sec elapsed
-#> [1] 1398.501
-#> [1] "m_step time"
-#> 0.06 sec elapsed
-#> [1] 5
-#> [1] "e_step time"
-#> 0.84 sec elapsed
-#> [1] 1398.754
-#> [1] "m_step time"
-#> 0.06 sec elapsed
-#> [1] 6
-#> [1] "e_step time"
-#> 0.89 sec elapsed
-#> [1] 1399.044
-#> [1] "m_step time"
-#> 0.07 sec elapsed
-#> [1] 7
-#> [1] "e_step time"
-#> 0.9 sec elapsed
-#> [1] 1399.155
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 8
-#> [1] "e_step time"
-#> 0.91 sec elapsed
-#> [1] 1399.157
-#> [1] "m_step time"
-#> 0.04 sec elapsed
-#> [1] 9
-#> [1] "e_step time"
-#> 0.85 sec elapsed
-#> [1] 1399.155
-#> [1] "m_step time"
-#> 0.05 sec elapsed
-#> [1] 10
-#> [1] "e_step time"
-#> 0.86 sec elapsed
-#> [1] 1399.154
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 11
-#> [1] "e_step time"
-#> 0.92 sec elapsed
-#> [1] 1399.154
-#> [1] "m_step time"
-#> 0.06 sec elapsed
-#> [1] 12
-#> [1] "e_step time"
-#> 0.92 sec elapsed
-#> [1] 1399.154
-#> [1] "m_step time"
-#> 0.08 sec elapsed
-#> [1] 13
-#> [1] "e_step time"
-#> 0.92 sec elapsed
-#> [1] 1399.154
-#> [1] "m_step time"
-#> 0.07 sec elapsed
-#> [1] 14
-#> [1] "e_step time"
-#> 0.92 sec elapsed
-#> 13.36 sec elapsed
+#> 0.44 sec elapsed
+#> 1.4 sec elapsed
 
 # Grab the cluster means
 cluster_means <- extract_cluster_means(em_results)
@@ -162,13 +96,12 @@ cluster_assignments <- identify_clusters(nested_trajectory_data, em_results)
 # Count cluster assignments
 cluster_assignments %>%
   count(cluster, pred_cluster)
-#> # A tibble: 4 x 3
+#> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            2     6
-#> 2       1            3     5
-#> 3       2            1     6
-#> 4       3            1     3
+#> 1       1            3     5
+#> 2       2            1     8
+#> 3       3            2     7
 
 # Plot clusters assigments by assigned cluster mean
 cluster_assignments %>%
@@ -203,13 +136,12 @@ new_data_fit <- fit_new_data(new_trajectory_data, em_results)
 # Tabulate assignments
 new_data_fit %>%
   count(cluster, cluster_assigned)
-#> # A tibble: 4 x 3
+#> # A tibble: 3 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                2     7
-#> 2       1                3    27
-#> 3       2                1    48
-#> 4       3                1    38
+#> 1       1                3    48
+#> 2       2                1    41
+#> 3       3                2    31
 ```
 
 ## Now with NFL sample data
@@ -350,20 +282,20 @@ em_results <- driver_em_nested(vehicle_data_subset, K = 3)
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 3.17 sec elapsed
+#> 1.71 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.06 sec elapsed
+#> 0.04 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 3.05 sec elapsed
+#> 1.72 sec elapsed
 #> [1] -23709.81
 #> [1] "m_step time"
-#> 0.08 sec elapsed
+#> 0.03 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 2.92 sec elapsed
-#> 9.28 sec elapsed
+#> 1.74 sec elapsed
+#> 5.24 sec elapsed
 
 # Identify cluster assignments
 cluster_assignments <- identify_clusters(vehicle_data_subset, em_results)
@@ -374,9 +306,9 @@ cluster_assignments %>%
 #> # A tibble: 3 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            2   100
+#> 1       1            1   100
 #> 2       3            3   100
-#> 3       4            1   100
+#> 3       4            2   100
 
 # Plot clusters assigments by assigned cluster mean
 cluster_assignments %>%
