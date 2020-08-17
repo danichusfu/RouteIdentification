@@ -47,12 +47,16 @@ library(RouteIdentification)
 #> Warning: replacing previous import 'magrittr::extract' by 'tidyr::extract' when
 #> loading 'RouteIdentification'
 library(tidyverse)
-#> -- Attaching packages ------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
-#> v ggplot2 3.2.1     v purrr   0.3.3
-#> v tibble  2.1.3     v dplyr   0.8.4
-#> v tidyr   1.0.2     v stringr 1.4.0
+#> -- Attaching packages -------------------------------------------------------- tidyverse 1.3.0 --
+#> v ggplot2 3.3.0     v purrr   0.3.4
+#> v tibble  3.0.1     v dplyr   1.0.0
+#> v tidyr   1.1.0     v stringr 1.4.0
 #> v readr   1.3.1     v forcats 0.4.0
-#> -- Conflicts ---------------------------------------------------------------------------------------------- tidyverse_conflicts() --
+#> Warning: package 'ggplot2' was built under R version 3.6.3
+#> Warning: package 'tibble' was built under R version 3.6.3
+#> Warning: package 'purrr' was built under R version 3.6.3
+#> Warning: package 'dplyr' was built under R version 3.6.3
+#> -- Conflicts ----------------------------------------------------------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
 
@@ -61,26 +65,96 @@ nested_trajectory_data <- rand_centred_curves(n_clust = 3, n_curves = 20)
 
 # Apply EM algorithm, either to generated data or appropriately formatted data
 em_results <- driver_em_nested(nested_trajectory_data, K = 3)
-#> 0.01 sec elapsed
+#> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 1.2 sec elapsed
+#> 0.9 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.1 sec elapsed
+#> 0.13 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 1.17 sec elapsed
-#> [1] 3412.226
+#> 0.94 sec elapsed
+#> [1] 1392.234
 #> [1] "m_step time"
-#> 0.05 sec elapsed
+#> 0.04 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 1.17 sec elapsed
-#> 3.69 sec elapsed
+#> 0.89 sec elapsed
+#> [1] 1397.012
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 4
+#> [1] "e_step time"
+#> 0.85 sec elapsed
+#> [1] 1398.501
+#> [1] "m_step time"
+#> 0.06 sec elapsed
+#> [1] 5
+#> [1] "e_step time"
+#> 0.84 sec elapsed
+#> [1] 1398.754
+#> [1] "m_step time"
+#> 0.06 sec elapsed
+#> [1] 6
+#> [1] "e_step time"
+#> 0.89 sec elapsed
+#> [1] 1399.044
+#> [1] "m_step time"
+#> 0.07 sec elapsed
+#> [1] 7
+#> [1] "e_step time"
+#> 0.9 sec elapsed
+#> [1] 1399.155
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 8
+#> [1] "e_step time"
+#> 0.91 sec elapsed
+#> [1] 1399.157
+#> [1] "m_step time"
+#> 0.04 sec elapsed
+#> [1] 9
+#> [1] "e_step time"
+#> 0.85 sec elapsed
+#> [1] 1399.155
+#> [1] "m_step time"
+#> 0.05 sec elapsed
+#> [1] 10
+#> [1] "e_step time"
+#> 0.86 sec elapsed
+#> [1] 1399.154
+#> [1] "m_step time"
+#> 0.08 sec elapsed
+#> [1] 11
+#> [1] "e_step time"
+#> 0.92 sec elapsed
+#> [1] 1399.154
+#> [1] "m_step time"
+#> 0.06 sec elapsed
+#> [1] 12
+#> [1] "e_step time"
+#> 0.92 sec elapsed
+#> [1] 1399.154
+#> [1] "m_step time"
+#> 0.08 sec elapsed
+#> [1] 13
+#> [1] "e_step time"
+#> 0.92 sec elapsed
+#> [1] 1399.154
+#> [1] "m_step time"
+#> 0.07 sec elapsed
+#> [1] 14
+#> [1] "e_step time"
+#> 0.92 sec elapsed
+#> 13.36 sec elapsed
 
 # Grab the cluster means
 cluster_means <- extract_cluster_means(em_results)
+#> Warning: The `x` argument of `as_tibble.matrix()` must have column names if `.name_repair` is omitted as of tibble 2.0.0.
+#> Using compatibility `.name_repair`.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_warnings()` to see where this warning was generated.
 
 # Identify cluster assignments
 cluster_assignments <- identify_clusters(nested_trajectory_data, em_results)
@@ -88,12 +162,13 @@ cluster_assignments <- identify_clusters(nested_trajectory_data, em_results)
 # Count cluster assignments
 cluster_assignments %>%
   count(cluster, pred_cluster)
-#> # A tibble: 3 x 3
+#> # A tibble: 4 x 3
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
-#> 1       1            1     9
-#> 2       2            3     3
-#> 3       3            2     8
+#> 1       1            2     6
+#> 2       1            3     5
+#> 3       2            1     6
+#> 4       3            1     3
 
 # Plot clusters assigments by assigned cluster mean
 cluster_assignments %>%
@@ -128,12 +203,13 @@ new_data_fit <- fit_new_data(new_trajectory_data, em_results)
 # Tabulate assignments
 new_data_fit %>%
   count(cluster, cluster_assigned)
-#> # A tibble: 3 x 3
+#> # A tibble: 4 x 3
 #>   cluster cluster_assigned     n
 #>     <dbl>            <dbl> <int>
-#> 1       1                1    47
-#> 2       2                3    40
-#> 3       3                2    33
+#> 1       1                2     7
+#> 2       1                3    27
+#> 3       2                1    48
+#> 4       3                1    38
 ```
 
 ## Now with NFL sample data
@@ -172,6 +248,34 @@ nfl_bdb_sample %>%
 #>  9 2017090700     94 Rex Burkhead   flat      
 #> 10 2017090700     94 Brandin Cooks  deep_out  
 #> # ... with 384 more rows
+```
+
+## Now with the higlight data from Adam Sonty (@asonty)
+
+``` r
+## Another NFL example: NextGenStats Scraped Data (compliments to Adam Sonty)
+
+nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/asonty/ngs_highlights/master/play_data/2019_SEA_2020011201_3443.tsv",
+                                  data_source = "asonty")
+
+fitted_clusters <- nfl_ngs_sample %>%
+  select(curve_num, x, y) %>%
+  fit_new_data(nfl_em_results) %>%
+  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+
+# Overview of the assigned routes
+nfl_ngs_sample %>%
+  nest(cols = -c(gameId, playId, displayName)) %>%
+  select(gameId, playId, displayName) %>%
+  bind_cols(fitted_clusters %>% select(route_name))
+#> # A tibble: 5 x 4
+#>       gameId playId displayName              route_name
+#>        <dbl>  <dbl> <chr>                    <chr>     
+#> 1 2020011201   3443 Jimmy Graham             deep_out  
+#> 2 2020011201   3443 Davante Adams            slant     
+#> 3 2020011201   3443 Geronimo Allison         comeback  
+#> 4 2020011201   3443 Aaron Jones              slant     
+#> 5 2020011201   3443 Marquez Valdes-Scantling slant
 ```
 
 ## Now with the higlight data from 903124
@@ -232,7 +336,7 @@ vehicle_data %>%
   facet_wrap(~ cluster)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ``` r
 
@@ -246,20 +350,20 @@ em_results <- driver_em_nested(vehicle_data_subset, K = 3)
 #> 0 sec elapsed
 #> [1] 1
 #> [1] "e_step time"
-#> 4.14 sec elapsed
+#> 3.17 sec elapsed
 #> [1] -Inf
 #> [1] "m_step time"
-#> 0.04 sec elapsed
+#> 0.06 sec elapsed
 #> [1] 2
 #> [1] "e_step time"
-#> 4.21 sec elapsed
+#> 3.05 sec elapsed
 #> [1] -23709.81
 #> [1] "m_step time"
-#> 0.04 sec elapsed
+#> 0.08 sec elapsed
 #> [1] 3
 #> [1] "e_step time"
-#> 4.1 sec elapsed
-#> 12.53 sec elapsed
+#> 2.92 sec elapsed
+#> 9.28 sec elapsed
 
 # Identify cluster assignments
 cluster_assignments <- identify_clusters(vehicle_data_subset, em_results)
@@ -271,12 +375,12 @@ cluster_assignments %>%
 #>   cluster pred_cluster     n
 #>     <dbl>        <dbl> <int>
 #> 1       1            2   100
-#> 2       3            1   100
-#> 3       4            3   100
+#> 2       3            3   100
+#> 3       4            1   100
 
 # Plot clusters assigments by assigned cluster mean
 cluster_assignments %>%
   plot_curve_assign()
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-2.png" width="100%" />
