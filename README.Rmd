@@ -117,6 +117,29 @@ nfl_bdb_sample %>%
 ```
 
 
+## Now with the higlight data from Adam Sonty (@asonty)
+
+
+```{r}
+## Another NFL example: NextGenStats Scraped Data (compliments to Adam Sonty)
+
+nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com/asonty/ngs_highlights/master/play_data/2019_SEA_2020011201_3443.tsv",
+                                  data_source = "asonty")
+
+fitted_clusters <- nfl_ngs_sample %>%
+  select(curve_num, x, y) %>%
+  fit_new_data(nfl_em_results) %>%
+  left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
+
+# Overview of the assigned routes
+nfl_ngs_sample %>%
+  nest(cols = -c(gameId, playId, displayName)) %>%
+  select(gameId, playId, displayName) %>%
+  bind_cols(fitted_clusters %>% select(route_name))
+
+
+```
+
 ## Now with the higlight data from 903124
 
 
@@ -159,9 +182,10 @@ vehicle_data %>%
   facet_wrap(~ cluster)
 
 # select a subset of clusters
-vehicle_data_subset = vehicle_data %>% 
-  filter(label %in% c(1,3,4)) %>% 
-  dplyr::select(-full_data, cluster = label )
+vehicle_data_subset <- 
+  vehicle_data %>% 
+  filter(label %in% c(1, 3, 4)) %>% 
+  dplyr::select(-full_data, cluster = label)
 
 em_results <- driver_em_nested(vehicle_data_subset, K = 3)
 
