@@ -64,12 +64,12 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
   
   kmeans_results <- kmeans(kmean_data, centers = K, iter.max = 100)
   
-  kmean_data %>%
-    dplyr::mutate(cluster = kmeans_results$cluster) %>%
-    ggplot2::ggplot(aes(x = x, y = y, colour = factor(cluster))) +
-    ggplot2::geom_point() +
-    ggplot2::theme_bw()
-  
+  # kmean_data %>%
+  #   dplyr::mutate(cluster = kmeans_results$cluster) %>%
+  #   ggplot2::ggplot(aes(x = x, y = y, colour = factor(cluster))) +
+  #   ggplot2::geom_point() +
+  #   ggplot2::theme_bw()
+  # 
   init_clusters <-
     prepared_trajectory_data %>%
     dplyr::mutate(cluster = kmeans_results$cluster) %>%

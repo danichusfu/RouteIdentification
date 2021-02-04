@@ -19,9 +19,12 @@ format_nfl_data <- function(file_name, data_source = "ngs"){
   } else if(data_source == "903124"){
     read_routes_from_csv <- read_routes_from_903124
     flip_field <- flip_field_903124
-  } else{
+  } else if(data_source == "asonty"){
     read_routes_from_csv <- read_routes_from_asonty
     flip_field <- flip_field_903124
+  } else if(data_source == "bdb21"){
+    read_routes_from_csv <- read_routes_from_bdb21
+    flip_field <- flip_field
   }
   
   

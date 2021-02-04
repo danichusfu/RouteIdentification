@@ -17,7 +17,7 @@ fit_new_data <- function(new_trajectory_data, em_results){
   
   new_piks <-
     new_trajectory_data %>%
-    tidyr::nest(data = c(x, y)) %>%
+    #tidyr::nest(data = c(x, y)) %>%
     dplyr::mutate(piks = map(data, ~ new_data_probs(., Alpha, Beta, Sigma)))
 
   new_data_fitted <-
