@@ -175,7 +175,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     l_hood_new <- sum(log(s)) + N * log(scale_m)
     
     # If we've reached our tolerance stop the loop
-    if(i> 1 & abs(l_hood_new - l_hood)/l_hood < 1e-3){
+    if(i> 1 & l_hood_new - l_hood/l_hood < 1e-3){
       break
     }
     
