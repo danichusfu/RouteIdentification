@@ -8,7 +8,7 @@
 #' @return Tibble containing results of the EM algorithm
 #' @export
 
-driver_em_nested <- function(nest_traj, K, P = 10){
+driver_em_nested <- function(nest_traj, K, P = 3){
   
   em_results <- nest_traj %>%
     tidyr::unnest(cols = c(x,y)) %>%

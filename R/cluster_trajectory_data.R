@@ -89,7 +89,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
   
   calc_Piik <- function(data, Sigma){
     data %>%
-      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ dmvnorm(c(..1, ..2),
+      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ emdbook::dmvnorm(c(..1, ..2),
                                                                      c(..3, ..4),
                                                                      Sigma))) %>%
       dplyr::bind_cols(as_tibble(INDEX))
@@ -150,9 +150,9 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
       dplyr::select(-curve_i) %>%
       Matrix::as.matrix()
     
+    Pik[is.infinite(Pik) & Pik > 0] <-.Machine$double.xmax
+    
     Pik <- Pik * Alpha
-    
-    
     
     toc()
     #############################################################################
@@ -175,7 +175,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     l_hood_new <- sum(log(s)) + N * log(scale_m)
     
     # If we've reached our tolerance stop the loop
-    if(abs(l_hood - l_hood_new) < 1e-6){
+    if(i> 1 & abs(l_hood_new - l_hood)/l_hood < 1e-3){
       break
     }
     

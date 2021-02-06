@@ -52,7 +52,7 @@ library(tidyverse)
 nested_trajectory_data <- rand_centred_curves(n_clust = 3, n_curves = 20)
 
 # Apply EM algorithm, either to generated data or appropriately formatted data
-em_results <- driver_em_nested(nested_trajectory_data, K = 3)
+em_results <- driver_em_nested(nested_trajectory_data, K = 3, P = 3)
 
 # Grab the cluster means
 cluster_means <- extract_cluster_means(em_results)
@@ -187,7 +187,7 @@ vehicle_data_subset <-
   filter(label %in% c(1, 3, 4)) %>% 
   dplyr::select(-full_data, cluster = label)
 
-em_results <- driver_em_nested(vehicle_data_subset, K = 3)
+em_results <- driver_em_nested(vehicle_data_subset, K = 3, P = 3)
 
 # Identify cluster assignments
 cluster_assignments <- identify_clusters(vehicle_data_subset, em_results)
