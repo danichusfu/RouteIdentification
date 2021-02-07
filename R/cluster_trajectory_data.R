@@ -191,16 +191,14 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     }
     
     # For monitoring
-    print(l_hood)
+    #print(l_hood)
     # overwrite the old log likelihood
     l_hood <- l_hood_new
     
     # Calculate the Pi_ik
     Pik <- Pik/s
-    j
-    round(Pik, 2)-> j
-    j
-    # Perform Maximization Step
+   
+     # Perform Maximization Step
     
     print("m_step time")
     tic()
