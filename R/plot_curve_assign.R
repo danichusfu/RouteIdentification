@@ -13,7 +13,7 @@ plot_curve_assign <- function(nest_traj_with_em){
     tidyr::unnest(cols = c(x,y)) %>%
     ggplot2::ggplot(aes(x = x, y = y, group = curve_i, colour = factor(cluster))) +
     ggplot2::geom_path() +
-    ggplot2::facet_wrap(~ pred_cluster)
+    ggplot2::facet_wrap(~ pred_cluster, labeller = label_both)
   
   return(p1)
 }

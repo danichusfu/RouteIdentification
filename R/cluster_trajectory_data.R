@@ -56,9 +56,11 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
   
   ##################### INIT
   
+  
   kmean_data <-
     prepared_trajectory_data %>%
-    dplyr::transmute(ends = purrr::map(data, ~ filter(., row_number() == max(row_number())) %>% dplyr::select(x, y))) %>%
+    dplyr::transmute(ends = purrr::map(data, ~ filter(., row_number() == max(row_number())) %>% dplyr::select(x, y)),
+                     ends = purrr::map(data, ~ summarise(., x = mean(x), y = mean(y)))) %>%
     tidyr::unnest(cols = c(ends))
   
   
@@ -70,11 +72,15 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
   #   ggplot2::geom_point() +
   #   ggplot2::theme_bw()
   # 
+  # K means
   init_clusters <-
     prepared_trajectory_data %>%
-    dplyr::mutate(cluster = kmeans_results$cluster) %>%
-    tidyr::unnest(data) %>%
-    dplyr::select(cluster)
+    dplyr::mutate(cluster = kmeans_results$cluster) 
+  
+  # random
+  # init_clusters <-
+  #   prepared_trajectory_data %>%
+  #   dplyr::mutate(cluster = sample(rep(1:K, ceiling(nrow(.) / K)), size = nrow(.), replace = F))
   
   
   Alpha <-
@@ -84,13 +90,17 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     dplyr::mutate(prop = n/sum(n)) %>%
     dplyr::pull(prop)
   
-  c <- init_clusters %>% dplyr::pull(cluster)
+  c <- 
+    init_clusters  %>%
+    tidyr::unnest(data) %>%
+    dplyr::select(cluster) %>% 
+    dplyr::pull(cluster)
   
   
   calc_Piik <- function(data, Sigma){
     data %>%
-      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ emdbook::dmvnorm(c(..1, ..2),
-                                                                     c(..3, ..4),
+      transmute(Piik = purrr::pmap_dbl(list(x, y, x1, y1), ~ emdbook::dmvnorm(x = c(..3, ..4),
+                                                                     mu = c(..1, ..2),
                                                                      Sigma))) %>%
       dplyr::bind_cols(as_tibble(INDEX))
   }
@@ -142,7 +152,8 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     
     Pik <-
       data_Piik %>%
-      dplyr::mutate(Piik = Piik/scale_m) %>%
+      group_by(curve_i) %>%
+      dplyr::mutate(Piik = Piik/mean(Piik)) %>%
       dplyr::group_by(curve_i, k) %>%
       dplyr::summarise(Pik = prod(Piik))  %>%
       tidyr::spread(k, Pik) %>%
@@ -175,7 +186,7 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     l_hood_new <- sum(log(s)) + N * log(scale_m)
     
     # If we've reached our tolerance stop the loop
-    if(i> 1 & l_hood_new - l_hood/l_hood < 1e-3){
+    if(i> 1 & abs(l_hood_new - l_hood)/l_hood < 1e-6){
       break
     }
     
@@ -186,7 +197,9 @@ cluster_trajectory_data <- function(trajectory_data, P = 3, K = 5, niter = 20){
     
     # Calculate the Pi_ik
     Pik <- Pik/s
-    
+    j
+    round(Pik, 2)-> j
+    j
     # Perform Maximization Step
     
     print("m_step time")
