@@ -105,7 +105,8 @@ nfl_bdb_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com
                                   data_source = "ngs")
 
 fitted_clusters <- nfl_bdb_sample %>%
-  select(curve_num, x, y) %>%
+  dplyr::select(curve_num, x, y) %>%
+  tidyr::nest(data = c(x, y)) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
@@ -127,7 +128,8 @@ nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com
                                   data_source = "asonty")
 
 fitted_clusters <- nfl_ngs_sample %>%
-  select(curve_num, x, y) %>%
+  dplyr::select(curve_num, x, y) %>%
+  tidyr::nest(data = c(x, y)) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
@@ -150,7 +152,8 @@ nfl_ngs_sample <- format_nfl_data(file_name = "https://raw.githubusercontent.com
                                   data_source = "903124")
 
 fitted_clusters <- nfl_ngs_sample %>%
-  select(curve_num, x, y) %>%
+  dplyr::select(curve_num, x, y) %>%
+  tidyr::nest(data = c(x, y)) %>%
   fit_new_data(nfl_em_results) %>%
   left_join(cluster_route_map, by = c("cluster_assigned" = "cluster"))
 
